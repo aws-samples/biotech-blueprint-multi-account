@@ -1,0 +1,17 @@
+{
+  "app": "npx ts-node bin/bb-20.ts",  
+  "requireApproval": "never",
+  "context": {
+    "transitGatewayRouteTableSecretArn": "myotherbucket",
+    "researchTgAttachmentSecretArn": "myotherbucket",
+    "transitGatewaySecretArn": "myotherbucket",
+    "researchVpcCidrSecretArn": "myotherbucket", 
+    "identityTgAttachmentSecretArn": "asdf",
+    "identityVpcCidrSecretArn": "asdf",
+    "identityAccountAdConnectorSecretArn": "asdf",
+    "identityAccountAdConnectorSecretKeyArn": "asdf",
+    "transitGatewaySecretArn": "SDFDSF"
+    
+  }
+}
+
