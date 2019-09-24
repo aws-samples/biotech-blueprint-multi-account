@@ -219,7 +219,6 @@ export class IdentityCore extends core.Construct {
     //identitySecretsKey.grant(DomainControllerAdminConsoleRole, 'kms:Decrypt');
     //identitySecret.grantRead(DomainControllerAdminConsoleRole);
     
-    
     // TODO: Change subnets to private so this host is only accessible via VPN
     const domainControllerConsoleInstance = new ec2.Instance(this, 'DCAdminConsole', {
         machineImage: new ec2.WindowsImage(ec2.WindowsVersion.WINDOWS_SERVER_2019_ENGLISH_FULL_BASE),
@@ -231,6 +230,14 @@ export class IdentityCore extends core.Construct {
     });
     
     
+    //TODO: reduce cidr range to client vpn endpoint range
+    const rdpSecurityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
+      vpc: identityVPC,
+      description: 'Domain Controller Console Security Group',
+      allowAllOutbound: true   // Can be set to false
+    });
+    rdpSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3389), 'RDP Access');
+
 
     
     const prepDomainControllerForAdConnectorsDoc = new ssm.CfnDocument(this, 'prepDomainSsmDoc', {

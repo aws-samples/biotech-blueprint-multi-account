@@ -16,13 +16,14 @@ import { TransitVpn, TransitVpnProps } from '../lib/transitvpn-stack';
 
 const app = new core.App();
 
-const orgId = 'arn:aws:organizations::450255456661:organization/o-tbvgg7skas';
-const corporateDnsApex = "bbtest.underwoodpaul.com"
-const netBiosName = "corp"
-const envMaster  = { account: '450255456661'};
-const envIdentity  = { account: '450255456661', desiredVpcCidr: "10.1.0.0/16"};
-const envTransit = { account: '511685597804', desiredVpcCidr: "10.0.0.0/16"};
-const envResearch =   { account: '121660342839', desiredVpcCidr: "11.0.0.0/16"};
+const orgId = app.node.tryGetContext("orgArn");
+const corporateDnsApex = app.node.tryGetContext("corporateDnsApex");
+const netBiosName = app.node.tryGetContext("netBiosName");
+
+const envMaster  = { account: app.node.tryGetContext("envMasterAccountId") };
+const envIdentity  = { account: app.node.tryGetContext("envMasterAccountId"), desiredVpcCidr: "10.1.0.0/16"};
+const envTransit = { account: app.node.tryGetContext("envTransitAccountId"), desiredVpcCidr: "10.0.0.0/16"};
+const envResearch =   { account: app.node.tryGetContext("envResearchAccountId"), desiredVpcCidr: "11.0.0.0/16"};
 const vpnClientAssignedAddrCidr = "12.0.0.0/16";
 const vpnClientAccessCidr = "0.0.0.0/0";
 

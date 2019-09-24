@@ -1,6 +1,15 @@
 
-
 npm run build 
+
+orgArn="$(aws organizations describe-organization --profile master --query "Organization.Arn" --output text)"
+masterAcctId="$(aws sts get-caller-identity --profile master --query "Account" --output text)"
+transitAcctId="$(aws sts get-caller-identity --profile transit --query "Account" --output text)"
+researchAcctId="$(aws sts get-caller-identity --profile research --query "Account" --output text)"
+
+jq '.context.orgArn = $orgArn' --arg orgArn $orgArn cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
+jq '.context.envMasterAccountId = $accountID' --arg accountID $masterAcctId cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
+jq '.context.envTransitAccountId = $accountID' --arg accountID $transitAcctId cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
+jq '.context.envResearchAccountId = $accountID' --arg accountID $researchAcctId cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
 
 
 cdk deploy TransitAccountStack --profile transit
@@ -63,3 +72,7 @@ cdk deploy ResearchAdConnectorStack \
     --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
     --profile research
+    
+clientVpnEndpointId="$(aws ec2 describe-client-vpn-endpoints --profile transit --query "ClientVpnEndpoints[0].ClientVpnEndpointId" --output text)"
+    
+aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id $clientVpnEndpointId --profile transit --output text > ~/environment/TransitVpn.ovpn

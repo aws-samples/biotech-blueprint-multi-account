@@ -1,17 +1,23 @@
 {
-  "app": "npx ts-node bin/bb-20.ts",  
+  "app": "npx ts-node bin/bb-20.ts",
   "requireApproval": "never",
   "context": {
-    "transitGatewayRouteTableSecretArn": "myotherbucket",
-    "researchTgAttachmentSecretArn": "myotherbucket",
-    "transitGatewaySecretArn": "myotherbucket",
-    "researchVpcCidrSecretArn": "myotherbucket", 
-    "identityTgAttachmentSecretArn": "asdf",
-    "identityVpcCidrSecretArn": "asdf",
-    "identityAccountAdConnectorSecretArn": "asdf",
-    "identityAccountAdConnectorSecretKeyArn": "asdf",
-    "transitGatewaySecretArn": "SDFDSF"
-    
+    "corporateDnsApex": "yourcompany.com",
+    "corporateNetBiosShortName": "corp",
+    "transitGatewayRouteTableSecretArn": "XXXXXXXXXXXX",
+    "researchTgAttachmentSecretArn": "XXXXXXXXXXXX",
+    "transitGatewaySecretArn": "XXXXXXXXXXXX",
+    "researchVpcCidrSecretArn": "XXXXXXXXXXXX",
+    "identityTgAttachmentSecretArn": "XXXXXXXXXXXX",
+    "identityVpcCidrSecretArn": "XXXXXXXXXXXX",
+    "identityAccountAdConnectorSecretArn": "XXXXXXXXXXXX",
+    "identityAccountAdConnectorSecretKeyArn": "XXXXXXXXXXXX",
+    "masterAcctId": "XXXXXXXXXXXX",
+    "transitAcctId": "XXXXXXXXXXXXX",
+    "researchAcctId": "XXXXXXXXXXXXX",
+    "orgArn": "XXXXXXXXXXXXXXXXXXXXXXXXX",
+    "envMasterAccountId": "XXXXXXXXXXXXXXX",
+    "envTransitAccountId": "XXXXXXXXXXXX",
+    "envResearchAccountId": "XXXXXXXXXXX"
   }
 }
-
