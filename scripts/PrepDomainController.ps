@@ -46,31 +46,8 @@ Invoke-Command -Computer . -Credential $adAdminCred -ScriptBlock {
     #Install Chrome for end-user convienence. 
     #$Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
 
-    #Create AD Connector Group
-    New-ADGroup -Name 'CorporateVpnUsers' `
-        -SamAccountName CorporateVpnUsers `
-        -GroupCategory Security `
-        -GroupScope Global `
-        -DisplayName "Corporate VPN Users" `
-        -Path "OU=Users,OU=corp,DC=bbtest,DC=underwoodpaul,DC=com" `
-        -Description "Members of this group are allowed to connect to the Transit account's Client VPN Endpoint." `
-        -Credential $adAdminCred
 
 
-    $vpnUserGroup = Get-ADGroup "CorporateVpnUsers" -Credential $adAdminCred
-    $transitSecretDict.VpnUsersAdGroupSID = $vpnUserGroup.SID.Value
-
-    Update-SECSecret -SecretString (ConvertTo-Json $transitSecretDict) -SecretId IdentityAccountDomainControllerSecretsForAdConnectors 
-
-    #Create AD Connector Group
-    New-ADGroup -Name "Connectors" `
-        -SamAccountName Connectors `
-        -GroupCategory Security `
-        -GroupScope Global `
-        -DisplayName "AWS AD Connectors" `
-        -Path "OU=Users,OU=corp,DC=bbtest,DC=underwoodpaul,DC=com" `
-        -Description "This group is for AWS AD Connector service accounts." `
-        -Credential $adAdminCred
 
 
     $rootdse = Get-ADRootDSE -Credential $adAdminCred
@@ -86,6 +63,35 @@ Invoke-Command -Computer . -Credential $adAdminCred -ScriptBlock {
     % {$extendedrightsmap[$_.displayName]=[System.GUID]$_.rightsGuid}
 
     $domain = Get-ADDomain -Server $rootdse.dnsHostName -Credential $adAdminCred
+    
+    #Create AD Connector Group
+    New-ADGroup -Name "Connectors" `
+        -SamAccountName Connectors `
+        -GroupCategory Security `
+        -GroupScope Global `
+        -DisplayName "AWS AD Connectors" `
+        -Path $domain.UsersContainer `
+        -Description "This group is for AWS AD Connector service accounts." `
+        -Credential $adAdminCred
+    
+
+    #Create AD Connector Group
+    New-ADGroup -Name 'CorporateVpnUsers' `
+        -SamAccountName CorporateVpnUsers `
+        -GroupCategory Security `
+        -GroupScope Global `
+        -DisplayName "Corporate VPN Users" `
+        -Path $domain.UsersContainer `
+        -Description "Members of this group are allowed to connect to the Transit account's Client VPN Endpoint." `
+        -Credential $adAdminCred
+
+
+    $vpnUserGroup = Get-ADGroup "CorporateVpnUsers" -Credential $adAdminCred
+    $transitSecretDict.VpnUsersAdGroupSID = $vpnUserGroup.SID.Value
+
+    Update-SECSecret -SecretString (ConvertTo-Json $transitSecretDict) -SecretId IdentityAccountDomainControllerSecretsForAdConnectors 
+
+
 
     New-PSDrive -Name AD -PSProvider ActiveDirectory -Server $domain.RIDMaster -Credential $adAdminCred -Root ""
 
