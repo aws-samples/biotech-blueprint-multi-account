@@ -18,7 +18,7 @@ const app = new core.App();
 
 const orgId = app.node.tryGetContext("orgArn");
 const corporateDnsApex = app.node.tryGetContext("corporateDnsApex");
-const netBiosName = app.node.tryGetContext("netBiosName");
+const netBiosName = app.node.tryGetContext("corporateNetBiosShortName");
 
 const envMaster  = { account: app.node.tryGetContext("envMasterAccountId") };
 const envIdentity  = { account: app.node.tryGetContext("envMasterAccountId"), desiredVpcCidr: "10.1.0.0/16"};
