@@ -40,7 +40,6 @@ identityVpcCidr="$(aws secretsmanager get-secret-value --secret-id vc --profile 
 aws secretsmanager put-secret-value --secret-id vc --secret-string $identityVpcCidr --profile master
 identityVpcCidrSecretArn="$(aws secretsmanager get-secret-value --secret-id vc --profile master | grep -Po 'arn:aws:secretsmanager.*vc')"
 
-
 cdk deploy TransitRoutesStack \
     --context transitGatewayRouteTableSecretArn=$transitGatewayRouteTableSecretArn \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
@@ -62,6 +61,9 @@ cdk deploy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
     --profile research 
 
+#We have to wait for active directory to become actually servicable. 
+sleep 3m
+    
 cdk deploy TransitAdConnectorStack TransitVpnStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
     --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
