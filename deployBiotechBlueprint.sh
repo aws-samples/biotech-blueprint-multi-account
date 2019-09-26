@@ -62,7 +62,7 @@ cdk deploy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute \
     --profile research 
 
 #We have to wait for active directory to become actually servicable. 
-sleep 3m
+sleep 5m
     
 cdk deploy TransitAdConnectorStack TransitVpnStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
