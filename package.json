@@ -10,27 +10,27 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@types/node": "^8.10.54",
-    "aws-cdk": "^1.9.0",
-    "ts-node": "^8.4.1",
-    "typescript": "^3.6.3"
+    "@types/node": "^8.10.59",
+    "aws-cdk": "^1.20.0",
+    "ts-node": "^8.6.1",
+    "typescript": "^3.7.4"
   },
   "dependencies": {
-    "@aws-cdk/aws-certificatemanager": "^1.9.0",
-    "@aws-cdk/aws-cloudformation": "^1.9.0",
-    "@aws-cdk/aws-directoryservice": "^1.9.0",
-    "@aws-cdk/aws-ec2": "^1.9.0",
-    "@aws-cdk/aws-iam": "^1.9.0",
-    "@aws-cdk/aws-lambda": "^1.9.0",
-    "@aws-cdk/aws-logs": "^1.9.0",
-    "@aws-cdk/aws-ram": "^1.9.0",
-    "@aws-cdk/aws-s3": "^1.9.0",
-    "@aws-cdk/aws-secretsmanager": "^1.9.0",
-    "@aws-cdk/aws-ssm": "^1.9.0",
-    "@aws-cdk/core": "^1.9.0",
-    "@types/async": "^3.0.1",
+    "@aws-cdk/aws-certificatemanager": "^1.20.0",
+    "@aws-cdk/aws-cloudformation": "^1.20.0",
+    "@aws-cdk/aws-directoryservice": "^1.20.0",
+    "@aws-cdk/aws-ec2": "^1.20.0",
+    "@aws-cdk/aws-iam": "^1.20.0",
+    "@aws-cdk/aws-lambda": "^1.20.0",
+    "@aws-cdk/aws-logs": "^1.20.0",
+    "@aws-cdk/aws-ram": "^1.20.0",
+    "@aws-cdk/aws-s3": "^1.20.0",
+    "@aws-cdk/aws-secretsmanager": "^1.20.0",
+    "@aws-cdk/aws-ssm": "^1.20.0",
+    "@aws-cdk/core": "^1.20.0",
+    "@types/async": "^3.0.3",
     "async": "^3.1.0",
-    "aws-sdk": "^2.532.0",
-    "source-map-support": "^0.5.9"
+    "aws-sdk": "^2.601.0",
+    "source-map-support": "^0.5.16"
   }
 }
