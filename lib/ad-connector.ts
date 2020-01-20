@@ -24,8 +24,7 @@ export class AdConnector extends core.Construct {
 
   constructor(scope: core.Construct, id: string, props: AdConnectorProps) {
     super(scope, id);
-    
-    
+
     const role = new iam.Role(this, 'AdConnectorLambdaCustomResourceRole', {
         assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com')
     });

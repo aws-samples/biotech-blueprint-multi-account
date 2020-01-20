@@ -11,7 +11,7 @@ import { IdentityCore, IdentityCoreProps } from '../lib/identity-stack';
 import { TransitRoute, TransitRouteProps } from '../lib/transitroutes-stack';
 import { AdConnector, AdConnectorProps } from '../lib/ad-connector';
 import { VpcRouteTableTransitRoute, VpcRouteTableTransitRouteProps } from '../lib/vpcRouteTableTransitRoute';
-import { TransitVpn, TransitVpnProps } from '../lib/transitvpn-stack';
+import { TransitVpn, TransitVpnProps, BBTransitVpnEnrollment } from '../lib/transitvpn-stack';
 
 
 const app = new core.App();
@@ -24,6 +24,7 @@ const envMaster  = { account: app.node.tryGetContext("envMasterAccountId") };
 const envIdentity  = { account: app.node.tryGetContext("envMasterAccountId"), desiredVpcCidr: "10.1.0.0/16"};
 const envTransit = { account: app.node.tryGetContext("envTransitAccountId"), desiredVpcCidr: "10.0.0.0/16"};
 const envResearch =   { account: app.node.tryGetContext("envResearchAccountId"), desiredVpcCidr: "11.0.0.0/16"};
+const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "13.0.0.0/16"};
 const vpnClientAssignedAddrCidr = "12.0.0.0/16";
 const vpnClientAccessCidr = "0.0.0.0/0";
 
@@ -70,13 +71,19 @@ const transitAccount = new transitAccountStack(app,'TransitAccountStack', {env: 
 
 
 
+
+export interface childAccountStackProps extends core.StackProps {
+  desiredVpcCidr: string;
+}
+
+
 export class childAccountStack extends core.Stack {
   public readonly transitGatewayAttachment: ec2.CfnTransitGatewayAttachment;
   public readonly Vpc: ec2.Vpc;
   public readonly VpcCidrRange: string;
   public readonly txGtwyAttachmentId: string;
   
-  constructor(scope: core.App, id: string, props?: core.StackProps) {
+  constructor(scope: core.App, id: string, props: childAccountStackProps) {
     super(scope, id, props);
     
     // const accountCore = new BBChildAccountCore(this, 'BBChildAccountCore', {
@@ -88,7 +95,7 @@ export class childAccountStack extends core.Stack {
     const accountCore = new BBChildAccountCore(this, 'BBChildAccountCore', {
         orgId: orgId,
         integrationSecretsArn: app.node.tryGetContext("transitGatewaySecretArn"),
-        desiredVpcCidr: envResearch.desiredVpcCidr
+        desiredVpcCidr: props.desiredVpcCidr
     });
     
     this.Vpc = accountCore.Vpc;
@@ -97,7 +104,7 @@ export class childAccountStack extends core.Stack {
     
   }
 }
-const researchAccount = new childAccountStack(app,'ResearchAccountStack', {env: envResearch});
+const researchAccount = new childAccountStack(app,'ResearchAccountStack', {env: envResearch, desiredVpcCidr: envResearch.desiredVpcCidr });
 
 
 
@@ -193,7 +200,6 @@ const ResearchToTransitVpcRoute = new VpcRouteTableTransitRouteStack(app,'Resear
   env: envResearch,   destinationCidr: envTransit.desiredVpcCidr,   targetVpc: researchAccount.Vpc });
 
 
-
 export interface AdConnectorStackProps extends core.StackProps {
   targetVpc: ec2.IVpc;
 }
@@ -224,6 +230,8 @@ const ResearchAdConnectorStack = new AdConnectorStack(app,'ResearchAdConnectorSt
 
 export class TransitVpnStack extends core.Stack {
   
+  public readonly TransitVpn: TransitVpn;
+  
   constructor(scope: core.App, id: string, props?: core.StackProps) {
     super(scope, id, props);
     
@@ -241,9 +249,59 @@ export class TransitVpnStack extends core.Stack {
         IdentityAccountAdConnectorSecretArn: identityAccountAdConnectorSecretArn,
         IdentityAccountAdConnectorSecretKeyArn: identityAccountAdConnectorSecretKeyArn
     });
+    
+    this.TransitVpn = transitVpn;
+    
+    
+
+    
   }
 }
 const TransitVpnEndpointStack = new TransitVpnStack(app,'TransitVpnStack', {env: envTransit});
 
 
 
+
+const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, desiredVpcCidr: envCROatx.desiredVpcCidr});
+
+const CROatxToTransitVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToTransitVpcRoute', {
+  env: envCROatx,   destinationCidr: envTransit.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
+const TransitToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'TransitToCROatxVpcRoute', {
+  env: envTransit,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: transitAccount.vpc });  
+const CROatxToIdentityVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToIdentityVpcRoute', {
+  env: envCROatx,   destinationCidr: envIdentity.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
+const IdentityToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'IdentityToCROatxVpcRoute', {
+  env: envIdentity,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: identityAccount.Vpc });  
+const CROatxToResearchVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToResearchVpcRoute', {
+  env: envCROatx,   destinationCidr: envResearch.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });  
+const ResearchToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'ResearchToCROatxVpcRoute', {
+  env: envResearch,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: researchAccount.Vpc });  
+  
+  
+export class TransitEnrolledAccounts extends core.Stack {
+  
+  
+  constructor(scope: core.App, id: string, props?: core.StackProps) {
+    super(scope, id, props);
+    
+    const transitVPCRouteTableSecretsArn = app.node.tryGetContext("transitGatewayRouteTableSecretArn"); 
+    
+    const CROatxVpcTransitSecretsArn = app.node.tryGetContext("CROatxTgAttachmentSecretArn");
+    const CROatxVpcCidrRangeSecretsArn = app.node.tryGetContext("CROatxVpcCidrSecretArn");
+    
+    const CROatxTransitEnrollment = new BBTransitVpnEnrollment(this,'CROatxTransitEnrollment', {
+      env: envTransit, 
+      TransitVpn: TransitVpnEndpointStack.TransitVpn,
+      AccountToEnrollVpcCidr: envCROatx.desiredVpcCidr,
+      AccountDescription: "CROatx",
+      OrgId: orgId,
+      targetVpcTransitSecretsArn: CROatxVpcTransitSecretsArn,
+      transitVPCRouteTableSecretsArn: transitVPCRouteTableSecretsArn,
+      targetVPCCidrRangeSecretsArn: CROatxVpcCidrRangeSecretsArn
+      
+    });
+    
+  }
+}
+
+const TransitEnrolledAccountsStack = new TransitEnrolledAccounts(app,'TransitEnrolledAccountsStack', {env: envTransit});
