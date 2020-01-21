@@ -25,12 +25,6 @@ export class TransitRoute extends core.Construct {
     
     
     const transitGatewayRoutTableSecretValue = sm.Secret.fromSecretArn(scope, `${this.node.id}transitGatewayRouteTableSecretValue`, props.transitVPCRouteTableSecretsArn).secretValue;
-    
-    
-    //const targetVpcGatewayAttachmentSecretValue = sm.Secret.fromSecretArn(scope, 'targetVpcGatewayAttachmentSecretValue', props.targetVpcTransitSecretsArn).secretValueFromJson('GatewayAttachment');
-    //const targetCidrRangeSecretValue = sm.Secret.fromSecretArn(scope, 'targetVpcCiderRangeSecretValue', props.targetVpcTransitSecretsArn).secretValueFromJson('GatewayAttachment');
-    
-    
     const targetVpcGatewayAttachmentSecretValue = sm.Secret.fromSecretArn(scope, `${this.node.id}targetVpcGatewayAttachmentSecretValue`, props.targetVpcTransitSecretsArn).secretValue;
     const targetCidrRangeSecretValue = sm.Secret.fromSecretArn(scope, `${this.node.id}targetVpcCiderRangeSecretValue`, props.targetVPCCidrRangeSecretsArn).secretValue;
     

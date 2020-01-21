@@ -40,6 +40,8 @@ identityVpcCidr="$(aws secretsmanager get-secret-value --secret-id vc --profile 
 aws secretsmanager put-secret-value --secret-id vc --secret-string $identityVpcCidr --profile master
 identityVpcCidrSecretArn="$(aws secretsmanager get-secret-value --secret-id vc --profile master | grep -Po 'arn:aws:secretsmanager.*vc')"
 
+
+## context values are only needed because a downstream stack that relies on this one needs the context value?
 cdk deploy TransitRoutesStack \
     --context transitGatewayRouteTableSecretArn=$transitGatewayRouteTableSecretArn \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
@@ -63,7 +65,7 @@ cdk deploy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute \
 
 #We have to wait for active directory to become actually servicable. 
 sleep 5m
-    
+
 cdk deploy TransitAdConnectorStack TransitVpnStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
     --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
@@ -78,3 +80,45 @@ cdk deploy ResearchAdConnectorStack \
 clientVpnEndpointId="$(aws ec2 describe-client-vpn-endpoints --profile transit --query "ClientVpnEndpoints[0].ClientVpnEndpointId" --output text)"
     
 aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id $clientVpnEndpointId --profile transit --output text > ~/environment/TransitVpn.ovpn
+
+
+
+CROatxAcctId="$(aws sts get-caller-identity --profile CROatx --query "Account" --output text)"
+jq '.context.envCROatxAccountId = $accountID' --arg accountID $CROatxAcctId cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
+
+cdk deploy CROatxAccountStack --context transitGatewaySecretArn=$transitGatewayIdSecretArn --profile CROatx
+
+CROatxGatewayAttachment="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'tgw-attach-.{17}')"
+aws secretsmanager put-secret-value --secret-id ga --secret-string $CROatxGatewayAttachment --profile CROatx
+CROatxTgAttachmentSecretArn="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'arn:aws:secretsmanager.*ga')"
+CROatxVpcCidr="$(aws secretsmanager get-secret-value --secret-id vc --profile CROatx | grep -Po '[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/..')"
+aws secretsmanager put-secret-value --secret-id vc --secret-string $CROatxVpcCidr --profile CROatx
+CROatxVpcCidrSecretArn="$(aws secretsmanager get-secret-value --secret-id vc --profile CROatx | grep -Po 'arn:aws:secretsmanager.*vc')"
+
+
+cdk deploy CROatxToTransitVpcRoute CROatxToIdentityVpcRoute CROatxToResearchVpcRoute \
+    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+    --profile CROatx 
+    
+cdk deploy ResearchToCROatxVpcRoute \
+    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+    --profile research     
+    
+cdk deploy IdentityToCROatxVpcRoute \
+    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+    --profile master 
+    
+cdk deploy TransitToCROatxVpcRoute \
+    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+    --profile transit     
+    
+    
+cdk diff TransitEnrolledAccountsStack \
+    --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
+    --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
+    --context transitGatewayRouteTableSecretArn=$transitGatewayRouteTableSecretArn
+    --context CROatxTgAttachmentSecretArn=$CROatxTgAttachmentSecretArn \
+    --context CROatxVpcCidrSecretArn=$CROatxVpcCidrSecretArn \
+    --profile transit         
+    
+    

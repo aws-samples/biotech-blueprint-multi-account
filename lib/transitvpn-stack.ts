@@ -8,7 +8,7 @@ import kms = require("@aws-cdk/aws-kms");
 import ram = require("@aws-cdk/aws-ram");
 import iam = require("@aws-cdk/aws-iam");
 import fs = require('fs');
-
+import { TransitRoute, TransitRouteProps } from '../lib/transitroutes-stack';
 import log = require('@aws-cdk/aws-logs');
 import certmgr = require('@aws-cdk/aws-certificatemanager');
 
@@ -29,6 +29,9 @@ export interface TransitVpnProps extends core.StackProps {
 
 export class TransitVpn extends core.Construct {
   
+  public readonly ClientVpnEndpoint: ec2.CfnClientVpnEndpoint;
+  public readonly vpnAdGroupSid: core.SecretValue;
+  public readonly PrivateSubnets: Array<string>;
   
   constructor(scope: core.Construct, id: string, props: TransitVpnProps) {
     super(scope, id);
@@ -36,6 +39,7 @@ export class TransitVpn extends core.Construct {
     const adConnectorSecrets = sm.Secret.fromSecretArn(this, 'adConnectorSecrets', props.IdentityAccountAdConnectorSecretArn);
     
     const vpnAdGroupSid = adConnectorSecrets.secretValueFromJson('VpnUsersAdGroupSID');
+    this.vpnAdGroupSid = vpnAdGroupSid;
     const domainControllerDns0 = adConnectorSecrets.secretValueFromJson('DomainControllerDnsAddress0');
     const domainControllerDns1 = adConnectorSecrets.secretValueFromJson('DomainControllerDnsAddress1');
     
@@ -95,12 +99,13 @@ export class TransitVpn extends core.Construct {
         description: "Transit Client VPN Endpoint",
         splitTunnel: true, 
         //dnsServers: XXX,
-        
     });
     
     const privateSubnetSelection = { subnetType: ec2.SubnetType.PRIVATE };
     const privateSubnets = props.transitVpc.selectSubnets(privateSubnetSelection).subnetIds;
     
+    this.PrivateSubnets = privateSubnets;
+    this.ClientVpnEndpoint = VpnEndpoint;
     
     const endpointAssociation0 = new ec2.CfnClientVpnTargetNetworkAssociation(this, 'clientVpnEndpointAssociation0', {
         clientVpnEndpointId: VpnEndpoint.ref,
@@ -156,8 +161,56 @@ export class TransitVpn extends core.Construct {
     identityRoute.addDependsOn(endpointAssociation0);
     
 
-    //aws ec2 apply-security-groups-to-client-vpn-target-network --client-vpn-endpoint-id {0} --vpc-id {1} --security-group-ids {2}'.format(clientVpnEndpointId,vpcId,vpcSecurityGroup)
-  
+    //todo:
+    // client vpn authorization
+    // client vpn route
+    // transit gateway route
+    // transit gateway propigation
     
   }
 }
+
+
+  
+
+export class BBTransitVpnEnrollment extends core.Construct {
+
+  constructor(scope: core.Construct, id: string, props: TransitVpnEnrollmentAccountProps) {
+
+    super(scope, id);
+
+    new ec2.CfnClientVpnAuthorizationRule(this, `Authorizations`, {
+        clientVpnEndpointId: props.TransitVpn.ClientVpnEndpoint.ref,
+        targetNetworkCidr: props.AccountToEnrollVpcCidr,
+        accessGroupId: core.Token.asString(props.TransitVpn.vpnAdGroupSid),
+        description: `Allows Transit VPN users access to ${props.AccountDescription} VPC`
+    });
+    
+    new ec2.CfnClientVpnRoute(this, `VpnRoutes`, {
+        clientVpnEndpointId: props.TransitVpn.ClientVpnEndpoint.ref,
+        destinationCidrBlock: props.AccountToEnrollVpcCidr,
+        targetVpcSubnetId: core.Fn.select(0,props.TransitVpn.PrivateSubnets)
+    });
+    
+    
+    new TransitRoute(this,`TransitGatewayRoute`, {
+        orgId: props.OrgId,
+        targetVpcTransitSecretsArn: props.targetVpcTransitSecretsArn,
+        transitVPCRouteTableSecretsArn: props.transitVPCRouteTableSecretsArn,
+        targetVPCCidrRangeSecretsArn: props.targetVPCCidrRangeSecretsArn,
+    });
+
+  }
+  
+}
+export interface TransitVpnEnrollmentAccountProps extends core.StackProps {
+    TransitVpn: TransitVpn;
+    AccountToEnrollVpcCidr: string;
+    AccountDescription: string;
+    OrgId: string;
+    targetVpcTransitSecretsArn: string;
+    transitVPCRouteTableSecretsArn: string;
+    targetVPCCidrRangeSecretsArn: string;
+}
+
+
