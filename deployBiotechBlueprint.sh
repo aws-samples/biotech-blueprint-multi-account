@@ -64,7 +64,7 @@ cdk deploy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute \
     --profile research 
 
 #We have to wait for active directory to become actually servicable. 
-sleep 5m
+sleep 10m
 
 cdk deploy TransitAdConnectorStack TransitVpnStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
@@ -83,11 +83,22 @@ aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id $clientV
 
 
 
+#########################################################
+### Additional account BASELINE section: ---- START
+
+## Example:
 CROatxAcctId="$(aws sts get-caller-identity --profile CROatx --query "Account" --output text)"
 jq '.context.envCROatxAccountId = $accountID' --arg accountID $CROatxAcctId cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
-
 cdk deploy CROatxAccountStack --context transitGatewaySecretArn=$transitGatewayIdSecretArn --profile CROatx
 
+### Additional account BASELINE section: ---- END
+#########################################################
+
+
+#########################################################
+### Additional account ROUTES section: ---- START
+
+#In order to share configs between accounts we use secrets manager. Due to a character length limitation in cloudfrormation, we have to shorten the id to 'ga'/'vc'. 
 CROatxGatewayAttachment="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'tgw-attach-.{17}')"
 aws secretsmanager put-secret-value --secret-id ga --secret-string $CROatxGatewayAttachment --profile CROatx
 CROatxTgAttachmentSecretArn="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'arn:aws:secretsmanager.*ga')"
@@ -95,11 +106,10 @@ CROatxVpcCidr="$(aws secretsmanager get-secret-value --secret-id vc --profile CR
 aws secretsmanager put-secret-value --secret-id vc --secret-string $CROatxVpcCidr --profile CROatx
 CROatxVpcCidrSecretArn="$(aws secretsmanager get-secret-value --secret-id vc --profile CROatx | grep -Po 'arn:aws:secretsmanager.*vc')"
 
-
 cdk deploy CROatxToTransitVpcRoute CROatxToIdentityVpcRoute CROatxToResearchVpcRoute \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
     --profile CROatx 
-    
+
 cdk deploy ResearchToCROatxVpcRoute \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
     --profile research     
@@ -112,13 +122,14 @@ cdk deploy TransitToCROatxVpcRoute \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
     --profile transit     
     
-    
-cdk diff TransitEnrolledAccountsStack \
+
+cdk deploy CROatxTransitEnrolledAccountStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
     --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
-    --context transitGatewayRouteTableSecretArn=$transitGatewayRouteTableSecretArn
+    --context transitGatewayRouteTableSecretArn=$transitGatewayRouteTableSecretArn \
     --context CROatxTgAttachmentSecretArn=$CROatxTgAttachmentSecretArn \
     --context CROatxVpcCidrSecretArn=$CROatxVpcCidrSecretArn \
     --profile transit         
     
-    
+### Additional account ROUTES section: ---- END
+#########################################################

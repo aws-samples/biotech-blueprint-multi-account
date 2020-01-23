@@ -15,9 +15,12 @@
     "masterAcctId": "XXXXXXXXXXXX",
     "transitAcctId": "XXXXXXXXXXXXX",
     "researchAcctId": "XXXXXXXXXXXXX",
-    "orgArn": "XXXXXXXXXXXXXXXXXXXXXXXXX",
-    "envMasterAccountId": "XXXXXXXXXXXXXXX",
+    "orgArn": "XXXXXXXXXXXX",
+    "envMasterAccountId": "XXXXXXXXXXXX",
     "envTransitAccountId": "XXXXXXXXXXXX",
-    "envResearchAccountId": "XXXXXXXXXXX"
+    "envResearchAccountId": "XXXXXXXXXXXX",
+    "envCROatxAccountId": "XXXXXXXXX",
+    "CROatxTgAttachmentSecretArn": "XXXXXXXXXXXXX",
+    "CROatxVpcCidrSecretArn": "XXXXXXXXXXXXX"
   }
 }

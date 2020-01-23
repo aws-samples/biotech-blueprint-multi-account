@@ -24,7 +24,7 @@ const envMaster  = { account: app.node.tryGetContext("envMasterAccountId") };
 const envIdentity  = { account: app.node.tryGetContext("envMasterAccountId"), desiredVpcCidr: "10.1.0.0/16"};
 const envTransit = { account: app.node.tryGetContext("envTransitAccountId"), desiredVpcCidr: "10.0.0.0/16"};
 const envResearch =   { account: app.node.tryGetContext("envResearchAccountId"), desiredVpcCidr: "11.0.0.0/16"};
-const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "13.0.0.0/16"};
+
 const vpnClientAssignedAddrCidr = "12.0.0.0/16";
 const vpnClientAccessCidr = "0.0.0.0/0";
 
@@ -74,6 +74,7 @@ const transitAccount = new transitAccountStack(app,'TransitAccountStack', {env: 
 
 export interface childAccountStackProps extends core.StackProps {
   desiredVpcCidr: string;
+  desiredVpcName: string;
 }
 
 
@@ -95,7 +96,8 @@ export class childAccountStack extends core.Stack {
     const accountCore = new BBChildAccountCore(this, 'BBChildAccountCore', {
         orgId: orgId,
         integrationSecretsArn: app.node.tryGetContext("transitGatewaySecretArn"),
-        desiredVpcCidr: props.desiredVpcCidr
+        desiredVpcCidr: props.desiredVpcCidr,
+        desiredVpcName: props.desiredVpcName
     });
     
     this.Vpc = accountCore.Vpc;
@@ -104,7 +106,7 @@ export class childAccountStack extends core.Stack {
     
   }
 }
-const researchAccount = new childAccountStack(app,'ResearchAccountStack', {env: envResearch, desiredVpcCidr: envResearch.desiredVpcCidr });
+const researchAccount = new childAccountStack(app,'ResearchAccountStack', {env: envResearch, desiredVpcCidr: envResearch.desiredVpcCidr, desiredVpcName: "ResearchVpc" });
 
 
 
@@ -261,47 +263,87 @@ const TransitVpnEndpointStack = new TransitVpnStack(app,'TransitVpnStack', {env:
 
 
 
+export interface TransitEnrolledAccountProps extends core.StackProps {
+  AccountDescription: string;
+  AccountToEnrollVpcCidr: string;
+  targetVpcTransitSecretsArn: string;
+  transitVPCRouteTableSecretsArn: string;
+  targetVPCCidrRangeSecretsArn: string;
+}
 
-const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, desiredVpcCidr: envCROatx.desiredVpcCidr});
-
-const CROatxToTransitVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToTransitVpcRoute', {
-  env: envCROatx,   destinationCidr: envTransit.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
-const TransitToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'TransitToCROatxVpcRoute', {
-  env: envTransit,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: transitAccount.vpc });  
-const CROatxToIdentityVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToIdentityVpcRoute', {
-  env: envCROatx,   destinationCidr: envIdentity.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
-const IdentityToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'IdentityToCROatxVpcRoute', {
-  env: envIdentity,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: identityAccount.Vpc });  
-const CROatxToResearchVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToResearchVpcRoute', {
-  env: envCROatx,   destinationCidr: envResearch.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });  
-const ResearchToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'ResearchToCROatxVpcRoute', {
-  env: envResearch,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: researchAccount.Vpc });  
+export class TransitEnrolledAccount extends core.Stack {
   
   
-export class TransitEnrolledAccounts extends core.Stack {
-  
-  
-  constructor(scope: core.App, id: string, props?: core.StackProps) {
+  constructor(scope: core.App, id: string, props: TransitEnrolledAccountProps) {
     super(scope, id, props);
     
-    const transitVPCRouteTableSecretsArn = app.node.tryGetContext("transitGatewayRouteTableSecretArn"); 
     
-    const CROatxVpcTransitSecretsArn = app.node.tryGetContext("CROatxTgAttachmentSecretArn");
-    const CROatxVpcCidrRangeSecretsArn = app.node.tryGetContext("CROatxVpcCidrSecretArn");
-    
-    const CROatxTransitEnrollment = new BBTransitVpnEnrollment(this,'CROatxTransitEnrollment', {
+    const transitEnrollment = new BBTransitVpnEnrollment(this, props.AccountDescription+'TransitEnrollment', {
       env: envTransit, 
       TransitVpn: TransitVpnEndpointStack.TransitVpn,
-      AccountToEnrollVpcCidr: envCROatx.desiredVpcCidr,
-      AccountDescription: "CROatx",
+      AccountToEnrollVpcCidr: props.AccountToEnrollVpcCidr,
+      AccountDescription: props.AccountDescription,
       OrgId: orgId,
-      targetVpcTransitSecretsArn: CROatxVpcTransitSecretsArn,
-      transitVPCRouteTableSecretsArn: transitVPCRouteTableSecretsArn,
-      targetVPCCidrRangeSecretsArn: CROatxVpcCidrRangeSecretsArn
+      targetVpcTransitSecretsArn: props.targetVpcTransitSecretsArn,
+      transitVPCRouteTableSecretsArn: props.transitVPCRouteTableSecretsArn,
+      targetVPCCidrRangeSecretsArn: props.targetVPCCidrRangeSecretsArn
       
     });
+    
     
   }
 }
 
-const TransitEnrolledAccountsStack = new TransitEnrolledAccounts(app,'TransitEnrolledAccountsStack', {env: envTransit});
+
+
+/////////////////////////////////////////
+/// Additional account BASELINE section: ---- START
+
+// Example:
+const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "13.0.0.0/16"};
+const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, desiredVpcCidr: envCROatx.desiredVpcCidr, desiredVpcName: "CROatxVpc"});
+
+/// Account BASELINE section: ---- END
+/////////////////////////////////////////
+
+
+/////////////////////////////////////////
+/// Additional account ROUTING section: ---- START
+/// Here you need to make a descion about what the account should have access to.
+/// Do you want users of this account to access resources via VPN in the transit stack? You need to instantiate the TransitToCROatxVpcRoute and CROatxToTransitVpcRoute
+/// Do you want users/resources in this account to be able to route into the research vpc and vice versa? You need to instantiate ResearchToCROatxVpcRoute and CROatxToResearchVpcRoute
+/// Do you want users/resources of this account need to communicate with the domain controller in the identity stack? You need to instantiate IdentityToCROatxVpcRoute and CROatxToIdentityVpcRoute
+
+//Example:
+const CROatxToTransitVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToTransitVpcRoute', {
+  env: envCROatx,   destinationCidr: envTransit.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
+const TransitToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'TransitToCROatxVpcRoute', {
+  env: envTransit,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: transitAccount.vpc });
+  
+const CROatxToIdentityVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToIdentityVpcRoute', {
+  env: envCROatx,   destinationCidr: envIdentity.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
+const IdentityToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'IdentityToCROatxVpcRoute', {
+  env: envIdentity,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: identityAccount.Vpc });
+  
+const CROatxToResearchVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToResearchVpcRoute', {
+  env: envCROatx,   destinationCidr: envResearch.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });  
+const ResearchToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'ResearchToCROatxVpcRoute', {
+  env: envResearch,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: researchAccount.Vpc });  
+
+const CROatxTransitEnrolledAccountStack = new TransitEnrolledAccount(app,'CROatxTransitEnrolledAccountStack', {
+  env: envTransit,
+  AccountDescription: "CROatx",
+  AccountToEnrollVpcCidr: envCROatx.desiredVpcCidr,
+  targetVpcTransitSecretsArn: app.node.tryGetContext("CROatxTgAttachmentSecretArn"),
+  transitVPCRouteTableSecretsArn: app.node.tryGetContext("transitGatewayRouteTableSecretArn"),
+  targetVPCCidrRangeSecretsArn: app.node.tryGetContext("CROatxVpcCidrSecretArn")
+});
+
+/// Account ROUTING section: ---- END
+/////////////////////////////////////////
+
+
+
+
+
+

@@ -11,6 +11,7 @@ export interface BbCoreProps extends core.StackProps {
   orgId: string;
   integrationSecretsArn: string;
   desiredVpcCidr: string; 
+  desiredVpcName: string;
 }
 
 export class BBChildAccountCore extends core.Construct {
@@ -25,7 +26,7 @@ export class BBChildAccountCore extends core.Construct {
     
     const orgName = core.Arn.parse(props.orgId).resourceName!;
     
-    const researchVPC = new ec2.Vpc(this, 'ResearchVPC', {
+    const baselineVpc = new ec2.Vpc(this, props.desiredVpcName, {
           cidr: props.desiredVpcCidr,
           subnetConfiguration: [
            {
@@ -46,17 +47,17 @@ export class BBChildAccountCore extends core.Construct {
         ]
     });
     
-    this.Vpc = researchVPC;
+    this.Vpc = baselineVpc;
     
-    this.VpcCidrRange = researchVPC.vpcCidrBlock;
+    this.VpcCidrRange = baselineVpc.vpcCidrBlock;
     
     const dmzSubnetSelection = { subnetType: ec2.SubnetType.PUBLIC };
     const appSubnetSelection = { subnetType: ec2.SubnetType.PRIVATE };
     const dbSubnetSelection = { subnetType: ec2.SubnetType.ISOLATED };
    
-    researchVPC.addS3Endpoint('s3Endpoint', [dmzSubnetSelection,appSubnetSelection,dbSubnetSelection  ] );
+    baselineVpc.addS3Endpoint('s3Endpoint', [dmzSubnetSelection,appSubnetSelection,dbSubnetSelection  ] );
     
-    const allSubnets = researchVPC.selectSubnets();
+    const allSubnets = baselineVpc.selectSubnets();
  
  
     // Due to a bug in cloudformation validation for parameter length, we have to hack around this a little. When the bug is fixed, we will use the fromJsonline below instead of secretValue
@@ -69,7 +70,7 @@ export class BBChildAccountCore extends core.Construct {
     const transitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'tgAttachment', { 
         subnetIds: allSubnets.subnetIds,
         transitGatewayId: core.Token.asString(transitGatewayIDSecretValue), 
-        vpcId: researchVPC.vpcId
+        vpcId: baselineVpc.vpcId
     });
     
     
@@ -121,7 +122,7 @@ export class BBChildAccountCore extends core.Construct {
         secretName: "vc",
         generateSecretString : {
             secretStringTemplate: JSON.stringify( { 
-                    VpcCidr: researchVPC.vpcCidrBlock
+                    VpcCidr: baselineVpc.vpcCidrBlock
                 }),
             generateStringKey: "password"
         }, 
