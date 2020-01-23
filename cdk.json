@@ -18,6 +18,6 @@
     "orgArn": "XXXXXXXXXXXX",
     "envMasterAccountId": "XXXXXXXXXXXX",
     "envTransitAccountId": "XXXXXXXXXXXX",
-    "envResearchAccountId": "XXXXXXXXXXXX",
+    "envResearchAccountId": "XXXXXXXXXXXX"
   }
 }
