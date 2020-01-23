@@ -297,49 +297,46 @@ export class TransitEnrolledAccount extends core.Stack {
 
 
 /////////////////////////////////////////
-/// Additional account BASELINE section: ---- START
-
-// Example:
-const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "13.0.0.0/16"};
-const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, desiredVpcCidr: envCROatx.desiredVpcCidr, desiredVpcName: "CROatxVpc"});
-
-/// Account BASELINE section: ---- END
-/////////////////////////////////////////
+/// Example of how to onboard an additional account into the Blueprint
+/// Just find and replace 'CROatx' below with a more meaningful account name (must start with a capital letter, no spaces/numbers/hyphens)
 
 
-/////////////////////////////////////////
-/// Additional account ROUTING section: ---- START
-/// Here you need to make a descion about what the account should have access to.
-/// Do you want users of this account to access resources via VPN in the transit stack? You need to instantiate the TransitToCROatxVpcRoute and CROatxToTransitVpcRoute
-/// Do you want users/resources in this account to be able to route into the research vpc and vice versa? You need to instantiate ResearchToCROatxVpcRoute and CROatxToResearchVpcRoute
-/// Do you want users/resources of this account need to communicate with the domain controller in the identity stack? You need to instantiate IdentityToCROatxVpcRoute and CROatxToIdentityVpcRoute
+//// Example:
+//const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "13.0.0.0/16"};
+//const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, desiredVpcCidr: envCROatx.desiredVpcCidr, desiredVpcName: "CROatxVpc"});
 
-//Example:
-const CROatxToTransitVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToTransitVpcRoute', {
-  env: envCROatx,   destinationCidr: envTransit.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
-const TransitToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'TransitToCROatxVpcRoute', {
-  env: envTransit,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: transitAccount.vpc });
+
+///// Here you need to make a descion about what the account should have access to.
+///// Do you want users of this account to access resources via VPN in the transit stack? You need to instantiate the TransitToCROatxVpcRoute and CROatxToTransitVpcRoute
+///// Do you want users/resources in this account to be able to route into the research vpc and vice versa? You need to instantiate ResearchToCROatxVpcRoute and CROatxToResearchVpcRoute
+///// Do you want users/resources of this account need to communicate with the domain controller in the identity stack? You need to instantiate IdentityToCROatxVpcRoute and CROatxToIdentityVpcRoute
+
+//// Example:
+// const CROatxToTransitVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToTransitVpcRoute', {
+//   env: envCROatx,   destinationCidr: envTransit.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
+// const TransitToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'TransitToCROatxVpcRoute', {
+//   env: envTransit,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: transitAccount.vpc });
   
-const CROatxToIdentityVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToIdentityVpcRoute', {
-  env: envCROatx,   destinationCidr: envIdentity.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
-const IdentityToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'IdentityToCROatxVpcRoute', {
-  env: envIdentity,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: identityAccount.Vpc });
+// const CROatxToIdentityVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToIdentityVpcRoute', {
+//   env: envCROatx,   destinationCidr: envIdentity.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
+// const IdentityToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'IdentityToCROatxVpcRoute', {
+//   env: envIdentity,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: identityAccount.Vpc });
   
-const CROatxToResearchVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToResearchVpcRoute', {
-  env: envCROatx,   destinationCidr: envResearch.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });  
-const ResearchToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'ResearchToCROatxVpcRoute', {
-  env: envResearch,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: researchAccount.Vpc });  
+// const CROatxToResearchVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToResearchVpcRoute', {
+//   env: envCROatx,   destinationCidr: envResearch.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });  
+// const ResearchToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'ResearchToCROatxVpcRoute', {
+//   env: envResearch,   destinationCidr: envCROatx.desiredVpcCidr,   targetVpc: researchAccount.Vpc });  
 
-const CROatxTransitEnrolledAccountStack = new TransitEnrolledAccount(app,'CROatxTransitEnrolledAccountStack', {
-  env: envTransit,
-  AccountDescription: "CROatx",
-  AccountToEnrollVpcCidr: envCROatx.desiredVpcCidr,
-  targetVpcTransitSecretsArn: app.node.tryGetContext("CROatxTgAttachmentSecretArn"),
-  transitVPCRouteTableSecretsArn: app.node.tryGetContext("transitGatewayRouteTableSecretArn"),
-  targetVPCCidrRangeSecretsArn: app.node.tryGetContext("CROatxVpcCidrSecretArn")
-});
+// const CROatxTransitEnrolledAccountStack = new TransitEnrolledAccount(app,'CROatxTransitEnrolledAccountStack', {
+//   env: envTransit,
+//   AccountDescription: "CROatx",
+//   AccountToEnrollVpcCidr: envCROatx.desiredVpcCidr,
+//   targetVpcTransitSecretsArn: app.node.tryGetContext("CROatxTgAttachmentSecretArn"),
+//   transitVPCRouteTableSecretsArn: app.node.tryGetContext("transitGatewayRouteTableSecretArn"),
+//   targetVPCCidrRangeSecretsArn: app.node.tryGetContext("CROatxVpcCidrSecretArn")
+// });
 
-/// Account ROUTING section: ---- END
+/// END -  Example of how to onboard an additional account into the Blueprint
 /////////////////////////////////////////
 
 

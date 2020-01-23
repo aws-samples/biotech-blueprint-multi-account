@@ -19,8 +19,5 @@
     "envMasterAccountId": "XXXXXXXXXXXX",
     "envTransitAccountId": "XXXXXXXXXXXX",
     "envResearchAccountId": "XXXXXXXXXXXX",
-    "envCROatxAccountId": "XXXXXXXXX",
-    "CROatxTgAttachmentSecretArn": "XXXXXXXXXXXXX",
-    "CROatxVpcCidrSecretArn": "XXXXXXXXXXXXX"
   }
 }

@@ -84,52 +84,50 @@ aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id $clientV
 
 
 #########################################################
-### Additional account BASELINE section: ---- START
-
+### Example of how to onboard an additional account into the Blueprint
+### Just find and replace 'CROatx' below with a more meaningful account name (must start with a capital letter, no spaces/numbers/hyphens)
+### Dont forget to add the following properties to the cdk.json file:
+###    "envCROatxAccountId": "XXXXXXXXX",
+###    "CROatxTgAttachmentSecretArn": "XXXXXXXXXXXXX",
+###    "CROatxVpcCidrSecretArn": "XXXXXXXXXXXXX"
+### (leave the XXXXXs, the script populates them)
 ## Example:
-CROatxAcctId="$(aws sts get-caller-identity --profile CROatx --query "Account" --output text)"
-jq '.context.envCROatxAccountId = $accountID' --arg accountID $CROatxAcctId cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
-cdk deploy CROatxAccountStack --context transitGatewaySecretArn=$transitGatewayIdSecretArn --profile CROatx
 
-### Additional account BASELINE section: ---- END
-#########################################################
+#CROatxAcctId="$(aws sts get-caller-identity --profile CROatx --query "Account" --output text)"
+#jq '.context.envCROatxAccountId = $accountID' --arg accountID $CROatxAcctId cdk.json > tmp.$$.json && mv tmp.$$.json cdk.json
+#cdk deploy CROatxAccountStack --context transitGatewaySecretArn=$transitGatewayIdSecretArn --profile CROatx
 
+# CROatxGatewayAttachment="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'tgw-attach-.{17}')"
+# aws secretsmanager put-secret-value --secret-id ga --secret-string $CROatxGatewayAttachment --profile CROatx
+# CROatxTgAttachmentSecretArn="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'arn:aws:secretsmanager.*ga')"
+# CROatxVpcCidr="$(aws secretsmanager get-secret-value --secret-id vc --profile CROatx | grep -Po '[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/..')"
+# aws secretsmanager put-secret-value --secret-id vc --secret-string $CROatxVpcCidr --profile CROatx
+# CROatxVpcCidrSecretArn="$(aws secretsmanager get-secret-value --secret-id vc --profile CROatx | grep -Po 'arn:aws:secretsmanager.*vc')"
 
-#########################################################
-### Additional account ROUTES section: ---- START
+# cdk deploy CROatxToTransitVpcRoute CROatxToIdentityVpcRoute CROatxToResearchVpcRoute \
+#     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+#     --profile CROatx 
 
-#In order to share configs between accounts we use secrets manager. Due to a character length limitation in cloudfrormation, we have to shorten the id to 'ga'/'vc'. 
-CROatxGatewayAttachment="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'tgw-attach-.{17}')"
-aws secretsmanager put-secret-value --secret-id ga --secret-string $CROatxGatewayAttachment --profile CROatx
-CROatxTgAttachmentSecretArn="$(aws secretsmanager get-secret-value --secret-id ga --profile CROatx | grep -Po 'arn:aws:secretsmanager.*ga')"
-CROatxVpcCidr="$(aws secretsmanager get-secret-value --secret-id vc --profile CROatx | grep -Po '[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}/..')"
-aws secretsmanager put-secret-value --secret-id vc --secret-string $CROatxVpcCidr --profile CROatx
-CROatxVpcCidrSecretArn="$(aws secretsmanager get-secret-value --secret-id vc --profile CROatx | grep -Po 'arn:aws:secretsmanager.*vc')"
-
-cdk deploy CROatxToTransitVpcRoute CROatxToIdentityVpcRoute CROatxToResearchVpcRoute \
-    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
-    --profile CROatx 
-
-cdk deploy ResearchToCROatxVpcRoute \
-    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
-    --profile research     
+# cdk deploy ResearchToCROatxVpcRoute \
+#     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+#     --profile research     
     
-cdk deploy IdentityToCROatxVpcRoute \
-    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
-    --profile master 
+# cdk deploy IdentityToCROatxVpcRoute \
+#     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+#     --profile master 
     
-cdk deploy TransitToCROatxVpcRoute \
-    --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
-    --profile transit     
+# cdk deploy TransitToCROatxVpcRoute \
+#     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
+#     --profile transit     
     
 
-cdk deploy CROatxTransitEnrolledAccountStack \
-    --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
-    --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
-    --context transitGatewayRouteTableSecretArn=$transitGatewayRouteTableSecretArn \
-    --context CROatxTgAttachmentSecretArn=$CROatxTgAttachmentSecretArn \
-    --context CROatxVpcCidrSecretArn=$CROatxVpcCidrSecretArn \
-    --profile transit         
+# cdk deploy CROatxTransitEnrolledAccountStack \
+#     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
+#     --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
+#     --context transitGatewayRouteTableSecretArn=$transitGatewayRouteTableSecretArn \
+#     --context CROatxTgAttachmentSecretArn=$CROatxTgAttachmentSecretArn \
+#     --context CROatxVpcCidrSecretArn=$CROatxVpcCidrSecretArn \
+#     --profile transit         
     
-### Additional account ROUTES section: ---- END
+### END - Example of enrolling an additional account into the Blueprint
 #########################################################
