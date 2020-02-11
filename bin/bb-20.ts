@@ -123,7 +123,8 @@ export class IdentityStack extends core.Stack {
          corporateDnsApex: corporateDnsApex,
          netBiosName: netBiosName,
          integrationSecretsArn: app.node.tryGetContext("transitGatewaySecretArn"),
-         desiredVpcCidr: envIdentity.desiredVpcCidr
+         desiredVpcCidr: envIdentity.desiredVpcCidr,
+         vpnTransitAccessCIDR: envTransit.desiredVpcCidr
      });
      
      this.Vpc = identityCore.Vpc;
@@ -157,7 +158,7 @@ export class TransitRoutesStack extends core.Stack {
       orgId: orgId, 
       transitVPCRouteTableSecretsArn: transitVPCRouteTableSecretsArn,
       targetVpcTransitSecretsArn: identityVpcTransitSecretsArn,
-      targetVPCCidrRangeSecretsArn: identityVpcCidrRangeSecretsArn
+      targetVPCCidrRangeSecretsArn: identityVpcCidrRangeSecretsArn,
     });
   }
 }
