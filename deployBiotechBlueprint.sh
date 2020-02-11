@@ -48,7 +48,7 @@ cdk deploy TransitRoutesStack \
     --context researchTgAttachmentSecretArn=$researchTgAttachmentSecretArn \
     --context researchVpcCidrSecretArn=$researchVpcCidrSecretArn \
     --context identityTgAttachmentSecretArn=$identityTgAttachmentSecretArn \
-    --context identityVpcCidrSecretArn=$identityVpcCidrSecretArn \
+    --context identityVpcCidrS  ecretArn=$identityVpcCidrSecretArn \
     --profile transit
     
 
@@ -63,10 +63,8 @@ cdk deploy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
     --profile research 
 
-#We have to wait for active directory to become actually servicable. 
-sleep 10m
 
-cdk deploy TransitAdConnectorStack TransitVpnStack \
+cdk deploy TransitAdConnectorStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
     --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
     --profile transit
@@ -76,7 +74,15 @@ cdk deploy ResearchAdConnectorStack \
     --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
     --context transitGatewaySecretArn=$transitGatewayIdSecretArn \
     --profile research
-    
+
+#We have to wait for the AD connectors to become servicable. 
+#sleep 6m
+
+cdk deploy TransitVpnStack \
+    --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
+    --context identityAccountAdConnectorSecretKeyArn=$identityAccountAdConnectorSecretKeyArn \
+    --profile transit
+
 clientVpnEndpointId="$(aws ec2 describe-client-vpn-endpoints --profile transit --query "ClientVpnEndpoints[0].ClientVpnEndpointId" --output text)"
     
 aws ec2 export-client-vpn-client-configuration --client-vpn-endpoint-id $clientVpnEndpointId --profile transit --output text > ~/environment/TransitVpn.ovpn
