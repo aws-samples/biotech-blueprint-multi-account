@@ -48,7 +48,7 @@ cdk deploy TransitRoutesStack \
     --context researchTgAttachmentSecretArn=$researchTgAttachmentSecretArn \
     --context researchVpcCidrSecretArn=$researchVpcCidrSecretArn \
     --context identityTgAttachmentSecretArn=$identityTgAttachmentSecretArn \
-    --context identityVpcCidrS  ecretArn=$identityVpcCidrSecretArn \
+    --context identityVpcCidrSecretArn=$identityVpcCidrSecretArn \
     --profile transit
     
 
@@ -76,7 +76,7 @@ cdk deploy ResearchAdConnectorStack \
     --profile research
 
 #We have to wait for the AD connectors to become servicable. 
-#sleep 6m
+sleep 6m
 
 cdk deploy TransitVpnStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
