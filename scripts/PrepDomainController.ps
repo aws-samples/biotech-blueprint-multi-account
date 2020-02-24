@@ -19,7 +19,8 @@ $domain = $wmiDomain.DomainName
 
 $adAdminSecret = Get-SECSecretValue -SecretId ADAdminCreds 
 $adAdminSecretDict = ConvertFrom-Json $adAdminSecret.SecretString
-$adAdminAccountUsername = $domain+'\'+$adAdminSecretDict.username
+#$adAdminAccountUsername = $domain+'\'+$adAdminSecretDict.username
+$adAdminAccountUsername = $adAdminSecretDict.username
 $adAdminPassword = ConvertTo-SecureString $adAdminSecretDict.password -AsPlainText -Force
 $adAdminCred = New-Object System.Management.Automation.PSCredential -ArgumentList $adAdminAccountUsername,$adAdminPassword
 
