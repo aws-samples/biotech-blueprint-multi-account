@@ -54,7 +54,6 @@ export class IdentityCore extends core.Construct {
     const publicSubnetSelection = { subnetType: ec2.SubnetType.PUBLIC };
     const privateSubnets = identityVPC.selectSubnets(privateSubnetSelection).subnetIds;
     
-    
     const secretsManagerPolicy = new iam.PolicyStatement({
         actions: ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:CreateGrant", "kms:DescribeKey"],
         effect: iam.Effect.ALLOW,
@@ -101,7 +100,7 @@ export class IdentityCore extends core.Construct {
     
     const activeDirectory = new ds.CfnMicrosoftAD(this, 'IdentityAD', {
         edition : "Standard",
-        enableSso : true,
+        enableSso : false,
         name : props.corporateDnsApex,
         password : core.Token.asString(identitySecret.secretValueFromJson('password')),
         shortName : props.netBiosName,
@@ -109,7 +108,7 @@ export class IdentityCore extends core.Construct {
           subnetIds : privateSubnets,
           vpcId : identityVPC.vpcId
         },
-        createAlias: true
+        createAlias: false
     });
     
     
