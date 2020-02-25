@@ -1,11 +1,13 @@
-cdk destroy ResearchAdConnectorStack --profile research
-cdk destroy TransitAdConnectorStack TransitVpnStack --profile transit
+
+cdk destroy TransitVpnStack --force --profile transit
+cdk destroy ResearchAdConnectorStack --force --profile research
+cdk destroy TransitAdConnectorStack TransitVpnStack --force --profile transit
 
 
-cdk destroy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute --profile research 
-cdk destroy TransitToIdentityVpcRoute TransitToResearchVpcRoute --profile transit 
-cdk destroy IdentityToResearchVpcRoute IdentityToTransitVpcRoute --profile master 
-cdk destroy TransitRoutesStack --profile transit
-cdk destroy IdentityAccountStack --profile master
-cdk destroy ResearchAccountStack --profile research
-cdk destroy TransitAccountStack --profile transit
+cdk destroy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute --force --profile research 
+cdk destroy TransitToIdentityVpcRoute TransitToResearchVpcRoute --force --profile transit 
+cdk destroy IdentityToResearchVpcRoute IdentityToTransitVpcRoute --force --profile master 
+cdk destroy TransitRoutesStack --force --profile transit
+cdk destroy IdentityAccountStack --force --profile master
+cdk destroy ResearchAccountStack --force --profile research
+cdk destroy TransitAccountStack --force --profile transit
