@@ -21,11 +21,11 @@ const corporateDnsApex = app.node.tryGetContext("corporateDnsApex");
 const netBiosName = app.node.tryGetContext("corporateNetBiosShortName");
 
 const envMaster  = { account: app.node.tryGetContext("envMasterAccountId") };
-const envIdentity  = { account: app.node.tryGetContext("envMasterAccountId"), desiredVpcCidr: "10.1.0.0/16"};
-const envTransit = { account: app.node.tryGetContext("envTransitAccountId"), desiredVpcCidr: "10.0.0.0/16"};
-const envResearch =   { account: app.node.tryGetContext("envResearchAccountId"), desiredVpcCidr: "11.0.0.0/16"};
+const envIdentity  = { account: app.node.tryGetContext("envMasterAccountId"), desiredVpcCidr: "10.0.0.0/16"};
+const envTransit = { account: app.node.tryGetContext("envTransitAccountId"), desiredVpcCidr: "10.1.0.0/16"};
+const envResearch =   { account: app.node.tryGetContext("envResearchAccountId"), desiredVpcCidr: "10.2.0.0/16"};
 
-const vpnClientAssignedAddrCidr = "12.0.0.0/16";
+const vpnClientAssignedAddrCidr = "10.3.0.0.0/16";
 const vpnClientAccessCidr = "0.0.0.0/0";
 
     
