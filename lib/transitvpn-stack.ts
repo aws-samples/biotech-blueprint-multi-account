@@ -145,27 +145,35 @@ export class TransitVpn extends core.Construct {
     });
     
     
-    const researchRoute = new ec2.CfnClientVpnRoute(this, 'researchRoute', {
+    const researchRoute0 = new ec2.CfnClientVpnRoute(this, 'researchRoute', {
         clientVpnEndpointId: VpnEndpoint.ref,
         destinationCidrBlock: props.ResearchVpcCidr,
         targetVpcSubnetId: core.Fn.select(0,privateSubnets)
     });
     
-    const identityRoute = new ec2.CfnClientVpnRoute(this, 'identityRoute', {
+    const identityRoute0 = new ec2.CfnClientVpnRoute(this, 'identityRoute', {
         clientVpnEndpointId: VpnEndpoint.ref,
         destinationCidrBlock: props.IdentityVpcCidr,
         targetVpcSubnetId: core.Fn.select(0,privateSubnets)
     });
     
-    researchRoute.addDependsOn(endpointAssociation0);
-    identityRoute.addDependsOn(endpointAssociation0);
+    researchRoute0.addDependsOn(endpointAssociation0);
+    identityRoute0.addDependsOn(endpointAssociation0);
     
-
-    //todo:
-    // client vpn authorization
-    // client vpn route
-    // transit gateway route
-    // transit gateway propigation
+    const researchRoute1 = new ec2.CfnClientVpnRoute(this, 'researchRoute1', {
+        clientVpnEndpointId: VpnEndpoint.ref,
+        destinationCidrBlock: props.ResearchVpcCidr,
+        targetVpcSubnetId: core.Fn.select(1,privateSubnets)
+    });
+    
+    const identityRoute1 = new ec2.CfnClientVpnRoute(this, 'identityRoute1', {
+        clientVpnEndpointId: VpnEndpoint.ref,
+        destinationCidrBlock: props.IdentityVpcCidr,
+        targetVpcSubnetId: core.Fn.select(1,privateSubnets)
+    });
+    
+    researchRoute1.addDependsOn(endpointAssociation1);
+    identityRoute1.addDependsOn(endpointAssociation1);
     
   }
 }
@@ -186,12 +194,17 @@ export class BBTransitVpnEnrollment extends core.Construct {
         description: `Allows Transit VPN users access to ${props.AccountDescription} VPC`
     });
     
-    new ec2.CfnClientVpnRoute(this, `VpnRoutes`, {
+    new ec2.CfnClientVpnRoute(this, `VpnRoutes0`, {
         clientVpnEndpointId: props.TransitVpn.ClientVpnEndpoint.ref,
         destinationCidrBlock: props.AccountToEnrollVpcCidr,
         targetVpcSubnetId: core.Fn.select(0,props.TransitVpn.PrivateSubnets)
     });
     
+    new ec2.CfnClientVpnRoute(this, `VpnRoutes1`, {
+        clientVpnEndpointId: props.TransitVpn.ClientVpnEndpoint.ref,
+        destinationCidrBlock: props.AccountToEnrollVpcCidr,
+        targetVpcSubnetId: core.Fn.select(1,props.TransitVpn.PrivateSubnets)
+    });
     
     new TransitRoute(this,`TransitGatewayRoute`, {
         orgId: props.OrgId,

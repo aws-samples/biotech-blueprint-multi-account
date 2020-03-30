@@ -25,7 +25,7 @@ const envIdentity  = { account: app.node.tryGetContext("envMasterAccountId"), de
 const envTransit = { account: app.node.tryGetContext("envTransitAccountId"), desiredVpcCidr: "10.1.0.0/16"};
 const envResearch =   { account: app.node.tryGetContext("envResearchAccountId"), desiredVpcCidr: "10.2.0.0/16"};
 
-const vpnClientAssignedAddrCidr = "10.3.0.0.0/16";
+const vpnClientAssignedAddrCidr = "10.3.0.0/16";
 const vpnClientAccessCidr = "0.0.0.0/0";
 
     

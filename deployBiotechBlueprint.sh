@@ -64,7 +64,7 @@ cdk deploy ResearchToIdentityVpcRoute ResearchToTransitVpcRoute \
     --profile research 
 
 #We have to wait for AD to actually become serviceable.
-#sleep 10m
+sleep 10m
 
 cdk deploy TransitAdConnectorStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
@@ -78,7 +78,7 @@ cdk deploy ResearchAdConnectorStack \
     --profile research
 
 #We have to wait for the AD connectors to become servicable. 
-sleep 6m
+sleep 10m
 
 cdk deploy TransitVpnStack \
     --context identityAccountAdConnectorSecretArn=$identityAccountAdConnectorSecretArn \
