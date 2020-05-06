@@ -10,14 +10,15 @@ import kms = require('@aws-cdk/aws-kms');
 export interface BbCoreProps extends core.StackProps {
   orgId: string;
   integrationSecretsArn: string;
-  desiredVpcCidr: string; 
-  desiredVpcName: string;
+  desiredVpcCidr?: string; 
+  desiredVpcName?: string;
+  existingVpcId?: string;
 }
 
 export class BBChildAccountCore extends core.Construct {
     
   public readonly transitGatewayAttachment: ec2.CfnTransitGatewayAttachment;
-  public readonly Vpc: ec2.Vpc;
+  public readonly Vpc: ec2.IVpc;
   public readonly VpcCidrRange: string;
   public readonly tranistSecretsArn: string;
     
@@ -26,39 +27,53 @@ export class BBChildAccountCore extends core.Construct {
     
     const orgName = core.Arn.parse(props.orgId).resourceName!;
     
-    const baselineVpc = new ec2.Vpc(this, props.desiredVpcName, {
-          cidr: props.desiredVpcCidr,
-          subnetConfiguration: [
-           {
-             cidrMask: 20,
-             name: 'dmz',
-             subnetType: ec2.SubnetType.PUBLIC,
-           },
-           {
-             cidrMask: 20,
-             name: 'application',
-             subnetType: ec2.SubnetType.PRIVATE,
-           },
-           {
-             cidrMask: 20,
-             name: 'database',
-             subnetType: ec2.SubnetType.ISOLATED,
-           }, 
-        ]
-    });
+    if(props.desiredVpcCidr && props.desiredVpcName){
+        this.Vpc = new ec2.Vpc(this, props.desiredVpcName, {
+              cidr: props.desiredVpcCidr,
+              subnetConfiguration: [
+               {
+                 cidrMask: 20,
+                 name: 'dmz',
+                 subnetType: ec2.SubnetType.PUBLIC,
+               },
+               {
+                 cidrMask: 20,
+                 name: 'application',
+                 subnetType: ec2.SubnetType.PRIVATE,
+               },
+               {
+                 cidrMask: 20,
+                 name: 'database',
+                 subnetType: ec2.SubnetType.ISOLATED,
+               }, 
+            ]
+        });
+        
+        this.VpcCidrRange = this.Vpc.vpcCidrBlock;
+    } else{
+        if(props.existingVpcId){
+            this.Vpc = ec2.Vpc.fromLookup(this, 'importedVpcName', {
+               vpcId: props.existingVpcId
+            });
+            
+            this.VpcCidrRange = this.Vpc.vpcCidrBlock;
+        }
+    }
     
-    this.Vpc = baselineVpc;
     
-    this.VpcCidrRange = baselineVpc.vpcCidrBlock;
     
     const dmzSubnetSelection = { subnetType: ec2.SubnetType.PUBLIC };
     const appSubnetSelection = { subnetType: ec2.SubnetType.PRIVATE };
     const dbSubnetSelection = { subnetType: ec2.SubnetType.ISOLATED };
    
-    baselineVpc.addS3Endpoint('s3Endpoint', [dmzSubnetSelection,appSubnetSelection,dbSubnetSelection  ] );
+    if(this.Vpc instanceof ec2.Vpc){
+        this.Vpc.addS3Endpoint('s3Endpoint', [dmzSubnetSelection,appSubnetSelection,dbSubnetSelection  ] );    
+    }
     
-    const allSubnets = baselineVpc.selectSubnets();
- 
+    const appSubnets = this.Vpc.selectSubnets({ 
+        subnetType: ec2.SubnetType.PRIVATE,
+        onePerAz: true
+    });
  
     // Due to a bug in cloudformation validation for parameter length, we have to hack around this a little. When the bug is fixed, we will use the fromJsonline below instead of secretValue
     //const transitGatewayIDSecretValue = sm.Secret.fromSecretArn(scope, 'ImportedSecret', props.integrationSecretsArn).secretValueFromJson('TransitGatewayID');
@@ -68,9 +83,9 @@ export class BBChildAccountCore extends core.Construct {
     
     
     const transitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'tgAttachment', { 
-        subnetIds: allSubnets.subnetIds,
+        subnetIds: appSubnets.subnetIds,
         transitGatewayId: core.Token.asString(transitGatewayIDSecretValue), 
-        vpcId: baselineVpc.vpcId
+        vpcId: this.Vpc.vpcId
     });
     
     
@@ -122,7 +137,7 @@ export class BBChildAccountCore extends core.Construct {
         secretName: "vc",
         generateSecretString : {
             secretStringTemplate: JSON.stringify( { 
-                    VpcCidr: baselineVpc.vpcCidrBlock
+                    VpcCidr: this.Vpc.vpcCidrBlock
                 }),
             generateStringKey: "password"
         }, 

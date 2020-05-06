@@ -73,36 +73,44 @@ const transitAccount = new transitAccountStack(app,'TransitAccountStack', {env: 
 
 
 export interface childAccountStackProps extends core.StackProps {
-  desiredVpcCidr: string;
-  desiredVpcName: string;
+  desiredVpcCidr?: string;
+  desiredVpcName?: string;
+  existingVpcId?: string; 
 }
-
 
 export class childAccountStack extends core.Stack {
   public readonly transitGatewayAttachment: ec2.CfnTransitGatewayAttachment;
-  public readonly Vpc: ec2.Vpc;
+  public readonly Vpc: ec2.IVpc;
   public readonly VpcCidrRange: string;
   public readonly txGtwyAttachmentId: string;
   
   constructor(scope: core.App, id: string, props: childAccountStackProps) {
     super(scope, id, props);
-    
-    // const accountCore = new BBChildAccountCore(this, 'BBChildAccountCore', {
-    //     orgId: orgId,
-    //     integrationSecretsArn: "arn:aws:secretsmanager:us-east-1:511685597804:secret:tx"
-    // });
-    
 
-    const accountCore = new BBChildAccountCore(this, 'BBChildAccountCore', {
-        orgId: orgId,
-        integrationSecretsArn: app.node.tryGetContext("transitGatewaySecretArn"),
-        desiredVpcCidr: props.desiredVpcCidr,
-        desiredVpcName: props.desiredVpcName
-    });
+    if(props.desiredVpcCidr && props.desiredVpcName){
+      const accountCore = new BBChildAccountCore(this, 'BBChildAccountCore', {
+          orgId: orgId,
+          integrationSecretsArn: app.node.tryGetContext("transitGatewaySecretArn"),
+          desiredVpcCidr: props.desiredVpcCidr,
+          desiredVpcName: props.desiredVpcName
+      });
+      this.Vpc = accountCore.Vpc;
+      this.VpcCidrRange = accountCore.Vpc.vpcCidrBlock;  
+      
+      return;
+    }
     
-    this.Vpc = accountCore.Vpc;
-    this.VpcCidrRange = accountCore.Vpc.vpcCidrBlock;
-    
+    if(props.existingVpcId){
+      const accountCore = new BBChildAccountCore(this, 'BBChildAccountCore', {
+          orgId: orgId,
+          integrationSecretsArn: app.node.tryGetContext("transitGatewaySecretArn"),
+          existingVpcId: props.existingVpcId
+      });
+      this.Vpc = accountCore.Vpc;
+      this.VpcCidrRange = accountCore.Vpc.vpcCidrBlock;  
+      
+      return;
+    }
     
   }
 }
@@ -298,21 +306,25 @@ export class TransitEnrolledAccount extends core.Stack {
 
 
 /////////////////////////////////////////
-/// Example of how to onboard an additional account into the Blueprint
+/// Example of how to onboard an brand new account into the Blueprint
 /// Just find and replace 'CROatx' below with a more meaningful account name (must start with a capital letter, no spaces/numbers/hyphens)
 
 
-//// Example:
-//const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "13.0.0.0/16"};
-//const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, desiredVpcCidr: envCROatx.desiredVpcCidr, desiredVpcName: "CROatxVpc"});
+// // Example for enrolling a brand new account with a new VPC:
+// const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "10.13.0.0/16"};
+// const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, desiredVpcCidr: envCROatx.desiredVpcCidr, desiredVpcName: "CROatxVpc"});
 
+// //Example for enrolling an existing account with an existing VPC
+// // Note, you need to replace the desiredVpcCidr and existingVpcID respective values of the existing VPC.
+// const envCROatx =   { account: app.node.tryGetContext("envCROatxAccountId"), desiredVpcCidr: "XXXExistingVpcCidrRangeGoesHereXXX", region: 'XXXExistingVPCRegionGoesHereXXX'};
+// const CROatxAccount = new childAccountStack(app,'CROatxAccountStack', {env: envCROatx, existingVpcId: "XXXExistingVPCIdGoesHereXXX"});
 
-///// Here you need to make a descion about what the account should have access to.
-///// Do you want users of this account to access resources via VPN in the transit stack? You need to instantiate the TransitToCROatxVpcRoute and CROatxToTransitVpcRoute
-///// Do you want users/resources in this account to be able to route into the research vpc and vice versa? You need to instantiate ResearchToCROatxVpcRoute and CROatxToResearchVpcRoute
-///// Do you want users/resources of this account need to communicate with the domain controller in the identity stack? You need to instantiate IdentityToCROatxVpcRoute and CROatxToIdentityVpcRoute
+// /// Here you need to make a descion about what the account should have access to.
+// /// Do you want users of this account to access resources via VPN in the transit stack? You need to instantiate the TransitToCROatxVpcRoute and CROatxToTransitVpcRoute
+// /// Do you want users/resources in this account to be able to route into the research vpc and vice versa? You need to instantiate ResearchToCROatxVpcRoute and CROatxToResearchVpcRoute
+// /// Do you want users/resources of this account need to communicate with the domain controller in the identity stack? You need to instantiate IdentityToCROatxVpcRoute and CROatxToIdentityVpcRoute
 
-//// Example:
+// // Example:
 // const CROatxToTransitVpcRoute = new VpcRouteTableTransitRouteStack(app,'CROatxToTransitVpcRoute', {
 //   env: envCROatx,   destinationCidr: envTransit.desiredVpcCidr,   targetVpc: CROatxAccount.Vpc });
 // const TransitToCROatxVpcRoute = new VpcRouteTableTransitRouteStack(app,'TransitToCROatxVpcRoute', {
