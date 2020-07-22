@@ -145,7 +145,7 @@ It will take a few minutes, but you will eventually be presented with the follow
 Notice the terminal window at the bottom of the IDE. Run the following commands. You may get warnings, but they can be ignored. We are installing the AWS Cloud Development Kit (CDK) and pulling down the Biotech Blueprint source code.   
 
 ```shell	
-git clone https://github.com/paulu-aws/biotechblueprint.git
+git clone https://github.com/aws-samples/biotech-blueprint-multi-account
 cd biotechblueprint  
 ./prepCloud9env.sh
 ```
