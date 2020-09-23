@@ -38,7 +38,10 @@ export class masterAccountStack extends core.Stack {
     this.IntegrationProps = integrationProps;
   }
 }
-var masterAccount = new masterAccountStack(app,'MasterAccountStack', {env: envMaster});
+var masterAccount = new masterAccountStack(app,'MasterAccountStack', {
+  env: envMaster, 
+  description: "AWS Biotech Blueprint Multi Account is a strongly opinonated CDK framework for building a Control Tower based landing zone built for biotechs. (ib-qwff7s75ho)"
+});
 
 
 
