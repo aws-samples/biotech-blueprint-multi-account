@@ -146,7 +146,7 @@ Notice the terminal window at the bottom of the IDE. Run the following commands.
 
 ```shell	
 git clone https://github.com/aws-samples/biotech-blueprint-multi-account
-cd biotechblueprint  
+cd biotech-blueprint-multi-account  
 ./prepCloud9env.sh
 ```
 
