@@ -191,13 +191,14 @@ export class TransitAccountCore extends core.Construct {
     //arn:aws:ec2:us-east-2:111122223333:transit-gateway/tgw-0262a0e521EXAMPLE
     var transitGatewayArn = `arn:aws:ec2:${core.Stack.of(this).region}:${core.Stack.of(this).account}:transit-gateway/${transitGateway.ref}`;
         
-    new ram.CfnResourceShare(this,"transitGatewayRamShare", {
+    const ramShare = new ram.CfnResourceShare(this,"transitGatewayRamShare", {
         allowExternalPrincipals: true,
         name: "TransitGatewayShare",
         principals: [props.orgId],
         resourceArns: [transitGatewayArn]
     });
     
+    core.Tags.of(ramShare).add('RAM', 'SHARE');
 
 
   }
