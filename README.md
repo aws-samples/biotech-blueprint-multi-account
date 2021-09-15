@@ -1,6 +1,6 @@
 # Biotech Blueprint 2.0 Deployment Instructions
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/a97a2tUIs8ZnsloZV9h1xQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/a97a2tUIs8ZnsloZV9h1xQ.png)
 
 ## Setup the Control Tower Landing Zone
 
@@ -8,7 +8,7 @@ Log into your new ‘master’ account with the IAM user credentials you created
 
 Navigate to the AWS Control Tower console and click on the “Set up landing zone” button.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/WiVn5Gy9HDsYpwyXKDsf9Q.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/WiVn5Gy9HDsYpwyXKDsf9Q.png)
 
 Provide emails for Log Archive Account and the Audit Account. These need to be email addresses distinct from each other and the email address you used for the main account. Something like [log-archive@yourcompany.com](mailto:log-archive@yourcompany.com) and [audit@yourcompany.com](mailto:audit@yourcompany.com).   
 
@@ -16,13 +16,13 @@ Acknowledge the permissions notice before you click the “Setup landing zone”
 
 Get some coffee and set a timer for 60 minutes. It will take up an hour for AWS Control Tower to provision the ‘core’ control tower accounts and setup the other AWS services managed by Control Tower. You can safely close the browser and come back when your timer goes off.    
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/DEB-dGQZGPboadTolJ_r5Q.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/DEB-dGQZGPboadTolJ_r5Q.png)
 
 ## Set AWS SSO password.
 
 At some point during the AWS Control Tower setup, an email will be sent to the master account’s root email address.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/T_AqEagBjiDHJvzrXCxJsQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/T_AqEagBjiDHJvzrXCxJsQ.png)
 
 Click the “Accept Invitation” button and create a password. This username/password will only be used one-time during the setup to create the necessary credentials across the Master, Transit, and Research accounts. We will be changing the AWS SSO directory to Active Directory at the end of this guide, so this username/password will not be used after that.  
 
@@ -32,7 +32,7 @@ Once Control Tower has finished setting up the landing zone, its time to provisi
 
 Navigate to Control Tower in the AWS Console and click on the “Account Factory“ link on the left side, then the ”Quick account provisioning“ button.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/DYcV47OBODvUwOPG2aCIIw.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/DYcV47OBODvUwOPG2aCIIw.png)
 
 Use the following fields in the ‘Account details’ form and click create account.  
 
@@ -45,19 +45,19 @@ SSO User Last Name | Admin |
 Managed Org Unit | Custom | Drop down field. You will only see this option
 
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/bXQl1LiC_Dzou5BCNfTM2w.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/bXQl1LiC_Dzou5BCNfTM2w.png)
 
 You will see an info box with a link to Service Catalog where you can monitor the progress of the account factory. Click on the “AWS Service Catalog link”.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/QxYxte3KNUUV8-mCCOfVlQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/QxYxte3KNUUV8-mCCOfVlQ.png)
 
 Click on the ‘Provisioned products list’ tab and you will see the transit account under creation. Set another timer for about 25 minutes.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/6qNuDFM_P1JHLv8om8JfRg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/6qNuDFM_P1JHLv8om8JfRg.png)
 
 It will look like this once the account provisioning is complete:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/IKI6BS9bAaBQtyH7CMVqzg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/IKI6BS9bAaBQtyH7CMVqzg.png)
 
 You have to wait for this to complete before you proceed. Control Tower will give you an error message if you continue the guide without waiting for this step to finish.  
 
@@ -75,7 +75,7 @@ SSO User First Name | Research |
 SSO User Last Name | Admin |
 Managed Org Unit | Custom | Drop down field. You will only see this option
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/tgFFemcZ8G9jFO2fcQxEkQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/tgFFemcZ8G9jFO2fcQxEkQ.png)
 
 Alexa! Set a timer for 25 minutes.  
 
@@ -85,7 +85,7 @@ Inside your master account, open the AWS Resource Access Manager (RAM) in the AW
 
 Go to the ‘Settings’ portion of RAM and check the “Enable sharing within your AWS Organization” and click “Save Settings”  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/tgFFemcZ8G9jFO2fcQxEkQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/tgFFemcZ8G9jFO2fcQxEkQ.png)
 
 ## Elevate permissions in the Transit and Research accounts.
 
@@ -95,15 +95,15 @@ By default, accounts provisioned by Control Tower (excluding the Audit and Loggi
 
 Go to the AWS SSO service page in the AWS console and go to the “AWS Accounts” tab:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/P_rHXkhdMKNvfIQNoewrmg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/P_rHXkhdMKNvfIQNoewrmg.png)
 
 Select the check boxes next to the Research and Transit accounts and click “Assign Users” button.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/xiVVYo1cI9VY8X-J2M9caA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/xiVVYo1cI9VY8X-J2M9caA.png)
 
 Select the “AWS Control Tower Admin” account and click “Next: Permission sets”  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/MGpoVq5Nnm8sTuxqazRyIQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/MGpoVq5Nnm8sTuxqazRyIQ.png)
 
 Choose “AWS Administrator Access” and then click the “Finish” button. Should only take a few seconds. “Click the Proceed to AWS Accounts button“  
 
@@ -113,15 +113,15 @@ The default token expiration for IAM roles assumed by AWS SSO is 1 hour. It may 
 
 To extend that expiration, click on the “Permission Sets” tab and click on the “AWSAdministratorAccess” permission set directly. (Don’t click the radio button)  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/RrG3ew9mSYgnaUme7b6C9Q.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/RrG3ew9mSYgnaUme7b6C9Q.png)
 
 Click the “Edit”button and set the session duration to something greater than an hour.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/R1NXBTolbnZOg1sP74ITlQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/R1NXBTolbnZOg1sP74ITlQ.png)
 
 It will then ask you which accounts you want to reprovision the policy in. Select the Transit, Master, and Research accounts and click “Reprovision”  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/GgUlhoEi--YKiAhYDzOgUA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/GgUlhoEi--YKiAhYDzOgUA.png)
 
 Should only take a few seconds.  
 
@@ -131,7 +131,7 @@ AWS Cloud9 is a web based integrated development environment. You could run all 
 
 Navigate to the AWS Cloud9 console, and click the “Create environment” button.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/Jjern2OYcq8RiWnFtgRIbA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/Jjern2OYcq8RiWnFtgRIbA.png)
 
 Follow the creation wizard, but you only need to specify the following parameters. Leave the rest as their defaults.   
 
@@ -140,7 +140,7 @@ Instance Type: t2.small
 
 It will take a few minutes, but you will eventually be presented with the following development environment:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/KwVV8L5vkBHOcdhVfrOIrQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/KwVV8L5vkBHOcdhVfrOIrQ.png)
 
 Notice the terminal window at the bottom of the IDE. Run the following commands. You may get warnings, but they can be ignored. We are installing the AWS Cloud Development Kit (CDK) and pulling down the Biotech Blueprint source code.   
 
@@ -152,7 +152,7 @@ cd biotech-blueprint-multi-account
 
 The final output of the prepCloud9Env script is the path to the AWS credentials file. Click on the file name, and chose “Open” to open up the AWS Credentials File.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/BzYP12hI_gGBEzUtuaP8EQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/BzYP12hI_gGBEzUtuaP8EQ.png)
 
 ## Prepare Your AWS Credentials File
 
@@ -166,19 +166,19 @@ We are going to be deploying lots of stuff in the Master, Transit, and Research 
 
 <span style="color:#333333" textcolor="#333333">From the master account, visit the AWS SSO page in the console again. When the AWS SSO Dashboard comes up, visit the “User portal URL” listed at the bottom of the dashboard and log in with the username/password that you used in the “Set AWS SSO password.” section above.</span>  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/cOk52pCm-dW73CVVpltGbQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/cOk52pCm-dW73CVVpltGbQ.png)
 
 You should see something like the following once you have logged in.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/iNJHX3C8CutuSt99NDjQgA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/iNJHX3C8CutuSt99NDjQgA.png)
 
 Expand the "Research" account, and click on the"Command line or programmatic access" button on the "AWSAdministratorAccess" row.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/XDwwIgaeKhe7IodhNXZ4rg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/XDwwIgaeKhe7IodhNXZ4rg.png)
 
 Hover over the "Option 2" and copy that text.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/iqPZ5Xcxdyr1AfehgWE_-w.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/iqPZ5Xcxdyr1AfehgWE_-w.png)
 
 That text will look something like this:  
 
@@ -283,11 +283,11 @@ The deployment script will automatically output the TransitVPN.ovpn file @ `~/en
 
 Location of the TransitVPN.ovpn config file in Cloud9:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/VN6NyCe4PFHTiU93sl9pmQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/VN6NyCe4PFHTiU93sl9pmQ.png)
 
 For reference, you can also download the same client configuration file from the AWS VPC console’s "Client VPN Endpoints" page.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/HmtUeeRQRCDt2GpmxHKsWA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/HmtUeeRQRCDt2GpmxHKsWA.png)
 
 ### Download Client VPN Software  and import the CONFIGURATION file
 
@@ -297,21 +297,21 @@ You will first need a Client VPN application installed on your local machine. [T
 
 Go ahead and connect to the VPN. You will be prompted to login with credentials.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/kuJkz1g7K5fw5TYtIjzpDQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/kuJkz1g7K5fw5TYtIjzpDQ.png)
 
 By default, AWS Directory Services provisions a single username, “admin”, that has full domain controller permissions. The Biotech Blueprint deployment script has automatically given this admin permissions to log into this domain. To obtain the password, log into the Master Account and go to the AWS Secrets Manager service page.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/UmActxtymNaPK5zLIRjfYg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/UmActxtymNaPK5zLIRjfYg.png)
 
 Click on the `ADAdminCreds` secret   
 
 Scroll down to the “Secret value” section and click the “Retrieve secret value” button:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/L7RuXOKYh8xqv1jmQWyo2A.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/L7RuXOKYh8xqv1jmQWyo2A.png)
 
 You will see the username/password combo that you should use log into the VPN.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/bCSSuMOXnULNO20gb8iMYQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/bCSSuMOXnULNO20gb8iMYQ.png)
 
 You are now connected to the cloud! Now lets connect to that domain controller and start adding users/groups that are relevant to your company.   
 
@@ -321,19 +321,19 @@ At this point, you can directly connect your local machine to Active Directory a
 
 To connect to the host, log into the master account AWS console and visit the EC2 service page. Under “Instances”, you will see the “Domain Controller Console”. Right click on that instance and choose connect.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/hYM1mYdqUMsKc5QSqrrNBw.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/hYM1mYdqUMsKc5QSqrrNBw.png)
 
 Click on the “Download Remote Desktop File” and open it with your remote desktop client:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/-5dT1RgBjBHYEYh-svW9vA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/-5dT1RgBjBHYEYh-svW9vA.png)
 
 You may get a warning when you connect. Go ahead and click the connect button.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/FJypPRD3SwpmG0a3GlPZIQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/FJypPRD3SwpmG0a3GlPZIQ.png)
 
 You need to connect with the same AD credentials that you logged into the Client VPN Endpoint with. Your RDP client may default the user to your local machine’s current user. Click the “More choices” link and “Use a different account” option.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/OAUFmFXqHA3pwQc7aIktvA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/OAUFmFXqHA3pwQc7aIktvA.png)
 
 Your username needs to be a combination of your NetBIOS shortname and the “admin” username. You would have specified the shortname as the `corporateNetBiosShortName` value in the “Set your deployment preferences” section above. If you left the default value, the username will be: “corp\admin”.   
 
@@ -343,13 +343,13 @@ Click OK and you will get automatically logged into the Domain Controller Consol
 
 When the instance comes up, click the Windows icon in the bottom left corner and type in “Active Directory Users and Computers” and open the app.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/zcq-Jitkv7eva7zNlUc9xQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/zcq-Jitkv7eva7zNlUc9xQ.png)
 
 The snapin will automatically connect to Active Directory as the domain administrator (because you are logged in as the domain admin).  
 
 To start creating groups/users, expand the tree down from “yourcompany.com” to “yourshortname” to “Users”. For example:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/eONsc_MowKEpHRIWhI0uHw.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/eONsc_MowKEpHRIWhI0uHw.png)
 
 You will see 4 items in the list:  
 
@@ -390,7 +390,7 @@ Up to this point, the AWS SSO service that AWS Control Tower setup for you in th
 
 Click on the “Directory” section.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/Ghlo32OkOfNzu2g2tDVPwQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/Ghlo32OkOfNzu2g2tDVPwQ.png)
 
 Click on the “Change directory” link.  
 
@@ -398,17 +398,17 @@ Choose “Microsoft AD directory”.
 
 The identity stack’s AD environment should be prepopulated in the “Existing directories" drop down. Click Next.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/mz6J_ARbxxIJzKBBhzQxfA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/mz6J_ARbxxIJzKBBhzQxfA.png)
 
 You will get a warning that that all existing permissions will be removed. Type “CONFIRM” to acknowledge this.   
 
 It should only take a few seconds. You should see the following if it completed successfully.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/4uGqlTdMHQcH9C9dU-bHng.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/4uGqlTdMHQcH9C9dU-bHng.png)
 
 Click on the “Proceed to the directory” button. Then navigate the “AWS accounts” page in the AWS SSO console.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/xPTJXCZK1nGPRV73VUWReg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/xPTJXCZK1nGPRV73VUWReg.png)
 
 Its from here that we assign Active Directory users or groups IAM permissions. Lets start off giving access to the master account.   
 
@@ -416,11 +416,11 @@ Check the box next to the master account on the list and click the “Assign use
 
 You will see a search box come up to search for group names. Search for the group name you created earlier that you want to give master account admin privileges too. If you followed the recommended group names above, it would be “MasterAccountAdmins”. (Make sure you added yourself to that group  as described in the “Create your desired AD users and groups“ section above) Then click ”Next: Permissions sets“.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/j3CI62gDvGnQBm3863EiTQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/j3CI62gDvGnQBm3863EiTQ.png)
 
 Now we are about to assign permissions to users of that group on the account we selected. In order to give members of this group full administrator access to the account, we just need to check the “AWSAdministratorAccess” policy and click finish.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/X7ACbgj3oeHyzTslMwYSpg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/X7ACbgj3oeHyzTslMwYSpg.png)
 
 As you can see, there are other types of pre-built permission sets that you can assign to users or create your own. You can also select multiple permissions sets for the group. If a users has multiple permissions sets, they will see an option to login to the account for each permission set the belong to. For example, you may want to give users the option of escalating their privileges or emulating another role’s permissions.   
 
@@ -432,15 +432,15 @@ Go back to the AWS SSO Dashboard and copy the “User portal URL”.
 
 This URL is the entry point for for all users who need access to the AWS Console, CLI, or SDKs.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/tKz57e8lZjmr2L2fmQm_-g.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/tKz57e8lZjmr2L2fmQm_-g.png)
 
 Go ahead and visit that URL and login with the Active Directory username and password you created for yourself earlier.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/9HI7xYtTMlGBH6WRZMZuKw.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/9HI7xYtTMlGBH6WRZMZuKw.png)
 
 Expand the various accounts to access the management console or obtain AWS access keys and secret keys. In the image below, all of the accounts are listed as an illustration. If the logged in user only had access to one account, they would only see one account listed (or get logged in automatically).  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/j2Lj_ZfVz9zoaXdiA4CYgg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/j2Lj_ZfVz9zoaXdiA4CYgg.png)
 
 ## Giving account access to other users
 
@@ -462,15 +462,15 @@ At this point, you can begin your work in the shared research account that was c
 
 From the master account, you will need to visit the Control Tower console and click the “Provision new account” button:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/LjAtM0p-oReAgSSQnsffSg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/LjAtM0p-oReAgSSQnsffSg.png)
 
 From there, launch the “Account Factory” product:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/rJiM7dHhV6Q1RJwa4CicVg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/rJiM7dHhV6Q1RJwa4CicVg.png)
 
 For the purposes of this walkthrough, I’m going to pretend we are creating an account for a fictional Contract Research Organization (CRO) called CRO-ATX. Provide a name for the stack:  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/xaBTaQrxf05nfYj-QfcILg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/xaBTaQrxf05nfYj-QfcILg.png)
 
 You will need to supply the following parameters. You may be confused by the SSO* parameters. Didn't we switch SSO to use Active Directory instead of the AWS SSO identity store? The Account Factory portion of Control Tower still requires you supply the values but it does not use them.  
 
@@ -489,19 +489,19 @@ Account Name | [Group Name] | The logical name of the group you are creating the
 
 Click through the wizard prompts accepting the default values and click the “Launch” button on the final review page.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/SJASVJ06YQ9hEqq_yZu8-w.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/SJASVJ06YQ9hEqq_yZu8-w.png)
 
 Set another time for 20 minutes, watch some cat videos or get a coffee. After about 20 minutes you should see the deployment has succeeded under the “Status” section.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/I_h_lofIzxJiigWu7-JFGQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/I_h_lofIzxJiigWu7-JFGQ.png)
 
 Now, we need to give yourself administrator access to that environment. Visit the AWS SSO console’s “AWS Accounts” section, select the checkbox next to the new account, and click the “Assign users” button.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/X7G8Y5grkPlhq_-b_DtaLg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/X7G8Y5grkPlhq_-b_DtaLg.png)
 
 Search for yourself or an AD group you created earlier and move on to the permission sets page. Choose the “AWSAdministratorAccess” permission set and click the “Finish” button.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/n8rwqHxLqT7JmW4ImHW4WQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/n8rwqHxLqT7JmW4ImHW4WQ.png)
 
 Now that we have the account created, we need to ‘enroll’ it into the Transit and Identity stacks. This sets up the necessary networking infrastructure required to integrate with the transit and identity solutions the blueprint has deployed.   
 
@@ -665,17 +665,17 @@ First thing we need to do, is give permissions to the existing account to Contro
 
 To do that, we need to first create an IAM role. Go to the IAM console in the existing account. Select roles on the left, and create the “Create role” button.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/b2d1S4YSdldISJD5Iror5Q.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/b2d1S4YSdldISJD5Iror5Q.png)
 
 For “Select type of trusted entity”, choose “Another AWS account”.  
 
 Supply the account ID of the master account and leave the two options unchecked. Click “Next: Permissions”  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/UcHkbfrp8luxGq-O1JXvNg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/UcHkbfrp8luxGq-O1JXvNg.png)
 
 Select the “Administrator Access” policy and click “Next: Tags”
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/rA9dAmURsgzO9w_UKSIpmA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/rA9dAmURsgzO9w_UKSIpmA.png)
 
 Apply any tags if you like.   
 
@@ -683,9 +683,9 @@ Once you get to the Review screen, supply the following role name exactly: `AWSC
 
 Provide a description, something like “Used to give Control Tower permissions to master account” and click “Create role”.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/0ZlX6_2mE5XJsE0VIKKi5Q.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/0ZlX6_2mE5XJsE0VIKKi5Q.png)
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/BjDEyCbymP-IlhW-9EN_QQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/BjDEyCbymP-IlhW-9EN_QQ.png)
 
 ## Turn Off AWS Config Recording
 
@@ -693,15 +693,15 @@ AWS Control Tower will take over for any AWS Config recording once you enroll it
 
 To check if AWS config is running, go to the AWS Config console. If you see a screen like the one below that means you have never used AWS Config before and you can skip this step. Double check and make sure you are in the right region.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/RGcPJipgi3zm5g6z82GMAQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/RGcPJipgi3zm5g6z82GMAQ.png)
 
  If you see the following screen when you get to AWS Config, that means you AWS Config is enabled in this region for this account.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/N5v7u-8Apd3aBylcZRrjYQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/N5v7u-8Apd3aBylcZRrjYQ.png)
 
 Click on “Settings” on the left side and then the “Turn off” button to turn off recording.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/7g-RwU0_8jsnNyosk85fYQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/7g-RwU0_8jsnNyosk85fYQ.png)
 
 Confirm you are turning off Config.   
 
@@ -718,27 +718,27 @@ Next thing we need to do is add the existing account into the new AWS Organizati
 
 From the Master Account, visit the AWS Organization’s console and click on the “Add Account” button.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/PR31NKyMhBY27PPaiH8Ppw.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/PR31NKyMhBY27PPaiH8Ppw.png)
 
 Choose the “Invite account” option and supply the existing account’s email address or any notes you want.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/ubs2MIO9XK-puitBNbY0TQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/ubs2MIO9XK-puitBNbY0TQ.png)
 
 Supply the existing account ID and any notes. An email will be sent to the root email address of the existing account to confirm the invitation to join the AWS Organization.  It will look like this once the invite has been sent.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/uUZKFLu09DoIAC9jbzuhDQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/uUZKFLu09DoIAC9jbzuhDQ.png)
 
 The email address associated with the existing account will receive the following email.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/Nn2v8qObNgR86sAjvxiOoQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/Nn2v8qObNgR86sAjvxiOoQ.png)
 
 Go the AWS Organizations console in the existing account to accept the invite (you don't need to wait on the email). If you haven’t already setup AWS Organizations, you will see the following on the dashboard. Click the “Invitations (1)” link.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/vxUgz54HkjH4SLbbUDZVVA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/vxUgz54HkjH4SLbbUDZVVA.png)
 
 Then click Accept.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/8vVa-UJJDEOLTvCO1oGESQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/8vVa-UJJDEOLTvCO1oGESQ.png)
 
 Your existing account is now part of the AWS Organization relationship with the other accounts created by the Blueprint.   
 
@@ -748,17 +748,17 @@ Next, we need to enroll the existing account into Control Tower.
 
 Visit the ‘Account factory’ from the AWS Control Tower dashboard in your master account and click on the “Enroll Account” button.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/fRie-zYC8daK8CFm6duSgw.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/fRie-zYC8daK8CFm6duSgw.png)
 
 Supply the email address associated with the root of the existing account. You need to provide a value for the AWS SSO fields, but they will not be used if you have switched your AWS SSO Identity provider to Active Directory or a custom IDp.   
 
 Choose ‘Custom’ for the Organizational Unit parameter.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/p0l3tUJBx0KIhVFlT-abrQ.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/p0l3tUJBx0KIhVFlT-abrQ.png)
 
 You will see a notification that the enrollment is underway.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/rfxS0HrF8fe1WBN_AxLSvA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/rfxS0HrF8fe1WBN_AxLSvA.png)
 
 You can follow the link to Service Catalog to observe the progress.  
 
@@ -768,7 +768,7 @@ It takes about 30 minutes to enroll the account so set a timer and take a break.
 
 It will look like this once the account has been enrolled.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/h4wUyLl3MLk7P8HizEmc_g.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/h4wUyLl3MLk7P8HizEmc_g.png)
 
 ## Give permissions to yourself or others through SSO
 
@@ -776,13 +776,13 @@ Now that the existing account has been enrolled, we need to grant permissions to
 
 In the master account, visit the AWS SSO console and go to “AWS accounts”. Select the existing account from the list and click the “Assign Users” button.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/EwlHbzSQ28xziMZDgzOGew.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/EwlHbzSQ28xziMZDgzOGew.png)
 
 Search for yourself or any group in your IDP who you want to give administrator access to. You may want to create an "existingAccountAdministrators" group in your IDP (AD/Okta/etc) before this step. Select "Next: Permission sets" once you have selected the users/groups you want to give administrator access to.   
 
 Choose the “AWSAdministratorAccess” permission set and click “Finish”.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/a-8XiQruiLTZMUd5Wn82QA.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/a-8XiQruiLTZMUd5Wn82QA.png)
 
 ## Enroll the existing account into the Biotech Blueprint
 
@@ -814,11 +814,11 @@ Next, log into the AWS SSO portal. You should now see the existing account appea
 
 Expand the existing account, and click the “Command line or programmatic access” link on the AWSAdministratroAccess row.  
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/CahEegtc6ToU58xqANyvCg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/CahEegtc6ToU58xqANyvCg.png)
 
 Select option 2 to copy the short term credentials to your clipboard.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/H50CAGD_QWcPo5kCe8orJg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/H50CAGD_QWcPo5kCe8orJg.png)
 
 Add a new profile to your configuration file for your existing account. Feel free to change the profile name from “existingAccount” to something more meaningful to you.  Dont forget to manually add the region configuration.  
 
@@ -980,6 +980,6 @@ Run the following command to deploy the new changes:
 
 Output should look like this once its complete.   
 
-![](https://devspacepaul.s3-us-west-2.amazonaws.com/bbma/docs/images/EcZX-0rYcM5ctbihLe4RBg.png)
+![](https://github.com/aws-samples/biotech-blueprint-multi-account/raw/mainline/docs/images/EcZX-0rYcM5ctbihLe4RBg.png)
 
 All done! Your existing account is now enrolled into the Blueprint.
