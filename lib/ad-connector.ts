@@ -60,11 +60,11 @@ export class AdConnector extends core.Construct {
             code: new lambda.InlineCode(fs.readFileSync('scripts/ad-connector-resource-handler.py', { encoding: 'utf-8' })),
             handler: 'index.main',
             timeout: core.Duration.seconds(300),
-            runtime: lambda.Runtime.PYTHON_2_7,
+            runtime: lambda.Runtime.PYTHON_3_7,
         })),
         properties: {
             IdentityAccountAdConnectorSecretArn: props.IdentityAccountAdConnectorSecretArn,
-            Description: "Transit Account AD Connector", 
+            Description: "AD Connector to Identity", 
             Size: "Small", 
             VpcId: props.connectorVpc.vpcId,
             SubnetIds: privateSubnets

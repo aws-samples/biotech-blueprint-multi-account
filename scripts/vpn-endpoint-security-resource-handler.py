@@ -69,7 +69,7 @@ def runCommandSet(commands, workDir='/tmp/'):
               
   my_env = os.environ.copy()
   my_env["PATH"] = "/tmp/bin:" + my_env["PATH"]
-  my_env["PYTHONPATH"] = "/tmp/:" + my_env["PYTHONPATH"]                
+  my_env["PYTHONPATH"] = "/tmp/:"           
   my_env["EASYRSA_BATCH"] = "1"      
 
   stdOutResponse = []                

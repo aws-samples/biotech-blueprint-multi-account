@@ -85,7 +85,7 @@ export class TransitVpn extends core.Construct {
             code: new lambda.InlineCode(fs.readFileSync('scripts/vpn-endpoint-security-resource-handler.py', { encoding: 'utf-8' })),
             handler: 'index.main',
             timeout: core.Duration.seconds(300),
-            runtime: lambda.Runtime.PYTHON_2_7,
+            runtime: lambda.Runtime.PYTHON_3_7,
             memorySize: 1024
         }))
     });
